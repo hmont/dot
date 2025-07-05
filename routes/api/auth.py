@@ -1,0 +1,94 @@
+import secrets
+
+from datetime import timedelta
+from datetime import datetime
+from datetime import timezone
+
+from fastapi import APIRouter
+from fastapi import Request
+from fastapi import Response
+
+from fastapi.responses import JSONResponse
+
+from asyncpg.exceptions import UniqueViolationError
+
+import bcrypt
+
+from tables import users
+
+from state.global_state import redis
+
+router = APIRouter(prefix='/auth')
+
+@router.post('/register')
+async def register(request: Request):
+    body = await request.json()
+
+    username: str = body['username']
+    password: str = body['password']
+
+    password_hashed = bcrypt.hashpw(
+        password.encode(),
+        bcrypt.gensalt(12)
+    )
+
+    content = {
+        "success": True,
+        "message": "account created - you may now login"
+    }
+
+    try:
+        await users.create(
+            username=username,
+            password_bytes=password_hashed
+        )
+    except UniqueViolationError:
+        content['success'] = False
+        content['message'] = 'another user already exists with this username'
+
+    return JSONResponse(content=content)
+
+
+@router.post('/login')
+async def login(request: Request, response: Response):
+    body = await request.json()
+
+    username: str = body['username']
+    password: str = body['password']
+
+    content = {
+        "success": True,
+        "message": "logged in successfully - redirecting"
+    }
+
+    user = await users.fetch_one(username=username)
+
+    if not user or not bcrypt.checkpw(
+        password.encode(), user.password_bytes
+    ):
+        content['success'] = False
+        content['message'] = 'invalid username/password combination'
+        return JSONResponse(content=content)
+
+    session_id = secrets.token_urlsafe(32)
+
+    expiry = datetime.now(timezone.utc) + timedelta(days=7)
+
+    response.set_cookie(
+        key='session_id',
+        value=session_id,
+        expires=expiry
+    )
+
+    await redis.set(
+        name=session_id,
+        value=user.id,
+        ex=timedelta(days=7)
+    )
+
+    return content
+
+
+@router.post('/logout')
+async def logout(request: Request, response: Response):
+    pass
