@@ -19,7 +19,11 @@ let currentIndex = 0;
 let contentInput = document.querySelector("#post-content");
 let charCount = document.querySelector("#char-count");
 
+let postsContainer = document.querySelector('#posts-container');
+
 document.addEventListener("DOMContentLoaded", e => {
+    fetchPosts();
+
     contentInput.placeholder = placeholders[currentIndex];
 
     setInterval(() => {
@@ -50,6 +54,28 @@ contentInput.oninput = e => {
     charCount.innerText = newLength.toString() + "/120"
 }
 
+async function getUser(user_id) {
+    try {
+        const response = await fetch(`/api/users/fetch?u=${user_id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        const userData = await response.json();
+
+        if (userData.success) {
+            return userData.user;
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        return null;
+    }
+}
+
 function createPost() {
     fetch('/api/posts/create', {
         method: 'POST',
@@ -66,13 +92,53 @@ function createPost() {
     .then(data => {
         if (data.success) {
             const successMessage = data.message || null;
-            showAlert('success', successMessage);
+            console.log('success', successMessage);
         } else {
             const errorMessage = data.message || data.error || null;
-            showAlert('error', errorMessage);
+            console.log('error', errorMessage);
         }
     })
     .catch(error => {
-        showAlert('error', error);
+        console.log('error', error);
+    });
+}
+
+async function fetchPosts() {
+    const response = await fetch('/api/posts/fetch?p=0&s=10', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+
+    data = await response.json();
+
+    if (!data.success) {
+        console.log('An error occurred while fetching posts.', data.message);
+        return;
+    }
+
+    postsContainer.innerHTML = '';
+
+    data.posts.forEach(async post => {
+        const poster = await getUser(post.poster);
+
+        const username = poster.username;
+        const display_name = poster.display_name;
+        const date = post.created_at;
+        const content = post.content;
+
+        const postHTML = `
+            <div class="bg-white rounded-lg shadow-sm border p-6 text-gray-500">
+                <div id="post grid grid-cols-5 inline-block text-left">
+                    <h2 class="text-gray-900 text-2xl font-bold align-middle inline-block">${display_name}</h2>
+                    <span class="ml-2 text-gray-500 text-md align-middle">@${username}</span>
+                    <span class="ml-2 text-gray-500 text-md align-middle">${(new Date(date)).toDateString()}</span>
+                    <p>${content}</p>
+                </div>
+            </div>
+        `
+
+        postsContainer.insertAdjacentHTML('afterbegin', postHTML);
     });
 }

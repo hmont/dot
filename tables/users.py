@@ -64,6 +64,11 @@ class Users(Base):
         nullable=False
     )
 
+    display_name = Column(
+        Text,
+        nullable=False
+    )
+
 
 async def create(
     username: str,
@@ -71,6 +76,7 @@ async def create(
 ):
     stmt = insert(Users).values(
         username=username,
+        display_name=username,
         password_bytes=password_bytes,
         privs=1
     )

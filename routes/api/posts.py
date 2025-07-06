@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Request
 
 from utils.auth import require_auth
@@ -25,3 +27,21 @@ async def create_post(request: Request):
     )
 
     return {"message": "success"}
+
+@router.post('/fetch')
+@require_auth
+async def fetch_posts(
+    request: Request,
+    p: Optional[int] = None,
+    s: Optional[int] = None
+):
+    _posts = await posts.fetch_many(
+        page=p, page_size=s
+    )
+
+    content = {'success': True,
+               'posts': [
+                   post.to_dict() for post in _posts
+               ]}
+
+    return content

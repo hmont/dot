@@ -1,4 +1,6 @@
 from typing import Any
+from typing import List
+from typing import Mapping
 
 from databases import Database as _Database
 
@@ -38,10 +40,18 @@ class Database:
     async def fetch_one(
         self,
         query: ClauseElement | str
-    ) -> dict[str, Any] | None:
+    ) -> Mapping | None:
         res = await self._db.fetch_one(self._compile(query))
 
         if res is None:
             return None
 
-        return dict(res._mapping)
+        return res._mapping
+
+    async def fetch_many(
+        self,
+        query: ClauseElement | str
+    ) -> List[Mapping]:
+        res = await self._db.fetch_all(self._compile(query))
+
+        return [record._mapping for record in res]
