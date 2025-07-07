@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>feed | dot</title>
+        <title>{{ user.display_name }} | dot</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
@@ -81,24 +81,21 @@
                     <!-- Left Sidebar - Create Post -->
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-lg shadow-sm border p-6 sticky top-24">
-                            <h2 class="text-xl font-bold text-gray-800 mb-4">share something positive</h2>
-                            <div class="space-y-4">
-                                <textarea
-                                    id="post-content"
-                                    class="w-full border-2 rounded-md py-3 px-4 text-sm resize-none focus:border-red-500 focus:outline-none"
-                                    rows="4"
-                                    maxlength="120"></textarea>
-                                <div class="flex items-center justify-between">
-                                    <span id="char-count" class="text-sm text-gray-500">0/120</span>
-                                    <button
-                                        id="post-btn"
-                                        class="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
-                                        onclick="createPost()"
-                                        disabled>
-                                        post
-                                    </button>
-                                </div>
-                            </div>
+                            <h2 class="text-3xl font-bold text-gray-800 mb">{{ user.display_name }}</h2>
+                            <h3 class="text-xl text-gray-700 mb-6">@{{ user.username }}</h3>
+
+                            <h4 class="text-lg text-gray-500 mb-6">
+                            {% if not user.bio %}
+                                <i>user has no biography</i>
+                            {% else %}
+                                {{ user.bio }}
+                            {% endif %}
+                            </h4>
+
+                            <h4 class="text-lg text-gray-500">
+                                joined
+                            <span title="{{ user.created_at }}">{{ time_ago }}</span>
+                            </h4>
                         </div>
                     </div>
 
@@ -107,8 +104,9 @@
                         <div class="space-y-6">
                             <!-- Feed Header -->
                             <div class="bg-white rounded-lg shadow-sm border p-6">
-                                <h1 class="text-3xl font-bold text-gray-800 mb-2">your feed</h1>
-                                <p class="text-lg text-gray-600">see what's brightening someone's day</p>
+                                <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ user.display_name }}'s recent posts
+                                </h1>
+                                <p class="text-lg text-gray-600">see what they've been up to recently</p>
                             </div>
 
                             <!-- Feed Posts Container -->
@@ -143,9 +141,6 @@
             </div>
         </div>
 
-        <script src="{{ url_for('static', path='/js/feed.js') }}"></script>
-        <script>
-            var currentPage = 1;
-        </script>
+        <script src="{{ url_for('static', path='/js/profile.js') }}"></script>
     </body>
 </html>

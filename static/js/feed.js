@@ -21,6 +21,48 @@ let charCount = document.querySelector("#char-count");
 
 let postsContainer = document.querySelector('#posts-container');
 
+let noPosts = document.querySelector("#no-posts")
+
+function showAlert(type, message = null) {
+    const alertContainer = document.getElementById('alert');
+    const successAlert = document.getElementById('alert-success');
+    const errorAlert = document.getElementById('alert-error');
+    const successMessage = document.getElementById('alert-success-message');
+    const errorMessage = document.getElementById('alert-error-message');
+
+    alertContainer.classList.remove('alert-bounce-in', 'alert-fade-out');
+
+    alertContainer.classList.add('hidden');
+    successAlert.classList.add('hidden');
+    errorAlert.classList.add('hidden');
+
+    setTimeout(() => {
+        if (type === 'success') {
+            alertContainer.classList.remove('hidden');
+            successAlert.classList.remove('hidden');
+            alertContainer.classList.add('alert-bounce-in');
+
+            successMessage.textContent = message;
+        } else if (type === 'error') {
+            alertContainer.classList.remove('hidden');
+            errorAlert.classList.remove('hidden');
+            alertContainer.classList.add('alert-bounce-in');
+
+            errorMessage.textContent = message;
+        }
+    }, 10);
+
+    setTimeout(() => {
+        alertContainer.classList.remove('alert-bounce-in');
+        alertContainer.classList.add('alert-fade-out');
+
+        setTimeout(() => {
+            alertContainer.classList.add('hidden');
+            alertContainer.classList.remove('alert-fade-out');
+        }, 300);
+    }, 5000);
+}
+
 document.addEventListener("DOMContentLoaded", e => {
     fetchPosts();
 
@@ -76,8 +118,8 @@ async function getUser(user_id) {
     }
 }
 
-function createPost() {
-    fetch('/api/posts/create', {
+async function createPost() {
+    const response = await fetch('/api/posts/create', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -85,26 +127,20 @@ function createPost() {
         body: JSON.stringify({
             content: contentInput.value
         })
-    })
-    .then(response => {
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            const successMessage = data.message || null;
-            console.log('success', successMessage);
-        } else {
-            const errorMessage = data.message || data.error || null;
-            console.log('error', errorMessage);
-        }
-    })
-    .catch(error => {
-        console.log('error', error);
     });
+
+    const data = await response.json();
+
+    if (!data.success) {
+        showAlert('error', data.message);
+        return;
+    }
+
+    showAlert('success', 'post created!');
 }
 
-async function fetchPosts() {
-    const response = await fetch('/api/posts/fetch?p=0&s=10', {
+async function fetchPosts(page = 1, page_size = 5) {
+    const response = await fetch(`/api/posts/fetch?p=${page}&s=${page_size}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -118,9 +154,11 @@ async function fetchPosts() {
         return;
     }
 
-    postsContainer.innerHTML = '';
+    if (data.posts.length > 0) {
+        noPosts.hidden = true;
+    }
 
-    data.posts.forEach(async post => {
+    for (const post of data.posts) {
         const poster = await getUser(post.poster);
 
         const username = poster.username;
@@ -131,14 +169,14 @@ async function fetchPosts() {
         const postHTML = `
             <div class="bg-white rounded-lg shadow-sm border p-6 text-gray-500">
                 <div id="post grid grid-cols-5 inline-block text-left">
-                    <h2 class="text-gray-900 text-2xl font-bold align-middle inline-block">${display_name}</h2>
-                    <span class="ml-2 text-gray-500 text-md align-middle">@${username}</span>
-                    <span class="ml-2 text-gray-500 text-md align-middle">${(new Date(date)).toDateString()}</span>
+                    <h2 class="text-gray-900 text-2xl font-bold align-middle inline-block hover:underline"><a href="/users/${username}">${display_name}</a></h2>
+                    <span class="ml-2 text-gray-500 text-md align-middle hover:underline"><a href="/users/${username}">@${username}</a></span>
+                    <span title="${date}" class="ml-2 text-gray-500 text-md align-middle">${(new Date(date)).toDateString()}</span>
                     <p>${content}</p>
                 </div>
             </div>
         `
 
-        postsContainer.insertAdjacentHTML('afterbegin', postHTML);
-    });
+        postsContainer.insertAdjacentHTML('beforeend', postHTML);
+    }
 }

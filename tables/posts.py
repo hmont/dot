@@ -63,13 +63,16 @@ async def create(
 
 async def fetch_many(
     poster: Optional[int] = None,
+    username: Optional[str] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ) -> List[Post]:
     query = select(Posts)
 
+    query = query.order_by(Posts.created_at.desc())
+
     if page and page_size:
-        query = query.limit(page_size).offset(page_size * page)
+        query = query.limit(page_size).offset(page_size * (page - 1))
 
     if poster:
         query = query.where(Posts.poster == poster)
