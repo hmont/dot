@@ -21,7 +21,7 @@ let charCount = document.querySelector("#char-count");
 
 let postsContainer = document.querySelector('#posts-container');
 
-let noPosts = document.querySelector("#no-posts")
+let noPosts = document.querySelector("#no-posts");
 
 function showAlert(type, message = null) {
     const alertContainer = document.getElementById('alert');
@@ -135,6 +135,8 @@ async function createPost() {
         showAlert('error', data.message);
         return;
     }
+
+    contentInput.value = '';
 
     showAlert('success', 'post created!');
 }

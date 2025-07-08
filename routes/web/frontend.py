@@ -5,11 +5,12 @@ from fastapi import Request
 
 from fastapi.templating import Jinja2Templates
 
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import RedirectResponse
 
 import timeago
 
 from utils.auth import require_auth
+from utils.auth import get_user
 
 from state.global_state import classifier
 
@@ -25,10 +26,16 @@ async def index(request: Request):
 
 @frontend_router.get("/login")
 async def login(request: Request):
+    if await get_user(request) is not None:
+        return RedirectResponse('/feed')
+
     return templates.TemplateResponse(name="login.html", request=request)
 
 @frontend_router.get("/register")
 async def register(request: Request):
+    if await get_user(request) is not None:
+        return RedirectResponse('/feed')
+
     return templates.TemplateResponse(name="register.html", request=request)
 
 @frontend_router.get("/feed")

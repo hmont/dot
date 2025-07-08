@@ -18,6 +18,8 @@ from tables import users
 
 from state.global_state import redis
 
+from utils.auth import require_auth
+
 router = APIRouter(prefix='/auth')
 
 @router.post('/register')
@@ -26,6 +28,13 @@ async def register(request: Request):
 
     username: str = body['username']
     password: str = body['password']
+
+    if not username.isalnum():
+        return {
+            'success': False,
+            'message': 'username can only contain '
+                       'alphanumeric characters'
+        }
 
     password_hashed = bcrypt.hashpw(
         password.encode(),
@@ -90,5 +99,14 @@ async def login(request: Request, response: Response):
 
 
 @router.post('/logout')
+@require_auth
 async def logout(request: Request, response: Response):
-    pass
+    session_id = request.cookies.get('session_id')
+
+    assert session_id is not None
+
+    await redis.delete(session_id)
+
+    response.delete_cookie('session_id')
+
+    return {'success': True, 'message': 'logged out'}

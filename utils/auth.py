@@ -9,6 +9,10 @@ from fastapi.responses import RedirectResponse
 
 from state.global_state import redis
 
+from tables import users
+
+from objects.user import User
+
 def require_auth(func: Callable):
 
     @functools.wraps(func)
@@ -34,3 +38,21 @@ def require_auth(func: Callable):
         return await func(*args, **kwargs)
 
     return wrapper
+
+async def get_user(request: Request) -> Optional[User]:
+    session_id = request.cookies.get('session_id')
+
+    if not session_id:
+        return None
+
+    user_id = await redis.get(session_id)
+
+    if not user_id:
+        return None
+
+    user = await users.fetch_one(user_id=user_id)
+
+    if not user:
+        return None
+
+    return user
