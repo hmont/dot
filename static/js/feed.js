@@ -63,6 +63,16 @@ function showAlert(type, message = null) {
     }, 5000);
 }
 
+function onContentInput(e) {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+
+        createPost();
+    }
+
+    console.log(e.key);
+}
+
 document.addEventListener("DOMContentLoaded", e => {
     fetchPosts();
 
@@ -137,6 +147,8 @@ async function createPost() {
     }
 
     contentInput.value = '';
+    charCount.value = '0/120';
+    charCount.classList.remove("text-red-500");
 
     showAlert('success', 'post created!');
 }
@@ -166,7 +178,7 @@ async function fetchPosts(page = 1, page_size = 5) {
         const username = poster.username;
         const display_name = poster.display_name;
         const date = post.created_at;
-        const content = post.content;
+        const content = decodeURIComponent(post.content);
 
         const postHTML = `
             <div class="bg-white rounded-lg shadow-sm border p-6 text-gray-500">
@@ -178,6 +190,9 @@ async function fetchPosts(page = 1, page_size = 5) {
                 </div>
             </div>
         `
+
+        // console.log(content);
+
 
         postsContainer.insertAdjacentHTML('beforeend', postHTML);
     }

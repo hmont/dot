@@ -125,7 +125,7 @@ async function loadPosts(page = 1) {
         const username = globalUser.username;
         const display_name = globalUser.display_name;
         const date = post.created_at;
-        const content = post.content;
+        const content = decodeURIComponent(post.content);
 
         const postHTML = `
             <div class="bg-white rounded-lg shadow-sm border p-6 text-gray-500">

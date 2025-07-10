@@ -1,6 +1,10 @@
 from typing import Optional
 from typing import List
 
+from urllib.parse import quote
+
+import bleach
+
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import Text
@@ -54,9 +58,11 @@ async def create(
     poster: int,
     content: str
 ) -> None:
+    cleaned = bleach.clean(content)
+
     stmt = insert(Posts).values(
-        poster=poster,
-        content=content
+        poster=int(poster),
+        content=quote(str(cleaned))
     )
 
     await database.execute(stmt)

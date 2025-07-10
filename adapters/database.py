@@ -1,57 +1,48 @@
-from typing import Any
-from typing import List
-from typing import Mapping
+from sqlalchemy import Executable
+from sqlalchemy import MappingResult
 
-from databases import Database as _Database
-
-from sqlalchemy import ClauseElement
-
-from sqlalchemy.dialects import postgresql
-
-DIALECT = postgresql.dialect()
+from sqlalchemy.ext.asyncio import create_async_engine
 
 class Database:
-    def __init__(self, url: str):
-        self._db = _Database(url)
-
-    async def connect(self):
-        await self._db.connect()
-
-    async def disconnect(self):
-        await self._db.disconnect()
-
-    def _compile(self, query: ClauseElement | str) -> str:
-        if not isinstance(query, ClauseElement):
-            return query
-
-        return str(query.compile(
-            dialect=DIALECT,
-            compile_kwargs={"literal_binds": True}
-        ))
+    def __init__(self, uri: str):
+        self.engine = create_async_engine(uri)
+        self.session = None
 
 
-    async def execute(
-        self,
-        query: ClauseElement | str
-    ) -> None:
-        return await self._db.execute(self._compile(query))
+    async def connect(self) -> None:
+        self.session = await self.engine.connect()
 
 
-    async def fetch_one(
-        self,
-        query: ClauseElement | str
-    ) -> Mapping | None:
-        res = await self._db.fetch_one(self._compile(query))
+    async def disconnect(self) -> None:
+        await self.engine.dispose()
 
-        if res is None:
-            return None
+        if self.session:
+            await self.session.close()
 
-        return res._mapping
+
+    async def execute(self, query: Executable) -> MappingResult:
+        if not self.session:
+            raise ValueError("You must connect() to the database first")
+
+        res = await self.session.execute(query)
+
+        await self.session.commit()
+
+        return res.mappings()
+
+
+    async def fetch_one(self, query: Executable):
+        result = await self.execute(query)
+
+        return result.fetchone()
+
 
     async def fetch_many(
         self,
-        query: ClauseElement | str
-    ) -> List[Mapping]:
-        res = await self._db.fetch_all(self._compile(query))
+        query: Executable,
+        page: int = 1,
+        page_size: int = 5
+    ):
+        result = await self.execute(query)
 
-        return [record._mapping for record in res]
+        return result.fetchmany(size=page_size)

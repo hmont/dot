@@ -20,7 +20,7 @@ async def create_post(request: Request):
 
     data = await request.json()
 
-    content = data['content']
+    content = data['content'][:120]
 
     positivity_score = classifier.predict(content)
 

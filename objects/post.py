@@ -4,6 +4,8 @@ from typing import Mapping
 from typing import Any
 from typing import Dict
 
+from sqlalchemy import RowMapping
+
 class Post:
     def __init__(
         self,
@@ -21,7 +23,7 @@ class Post:
 
 
     @classmethod
-    def from_mapping(cls, mapping: Mapping[str, Any]):
+    def from_mapping(cls, mapping: Mapping[str, Any] | RowMapping):
         return cls(
             post_id=mapping['id'],
             poster_id=mapping['poster'],

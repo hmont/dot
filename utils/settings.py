@@ -20,4 +20,4 @@ REDIS_PORT = int(os.environ['REDIS_PORT'])
 REDIS_PASS = quote(os.environ['REDIS_PASS'])
 REDIS_DB = int(os.environ['REDIS_DB'])
 
-DB_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"

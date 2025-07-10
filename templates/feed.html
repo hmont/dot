@@ -87,7 +87,7 @@
                                     id="post-content"
                                     class="w-full border-2 rounded-md py-3 px-4 text-sm resize-none focus:border-red-500 focus:outline-none"
                                     rows="4"
-                                    maxlength="120"></textarea>
+                                    maxlength="120" onkeydown="onContentInput(event)"></textarea>
                                 <div class="flex items-center justify-between">
                                     <span id="char-count" class="text-sm text-gray-500">0/120</span>
                                     <button
@@ -112,7 +112,7 @@
                             </div>
 
                             <!-- Feed Posts Container -->
-                            <div class="space-y-6" id="posts-container">
+                            <div class="space-y-6 break-words overflow-wrap-anywhere" id="posts-container">
                                 <!-- Posts will be loaded here -->
                                 <div id="no-posts" class="text-center bg-white rounded-lg shadow-sm border p-6">
                                     <h3 class="text-lg font-medium text-gray-900 mb-2">no posts yet</h3>
