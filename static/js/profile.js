@@ -72,7 +72,7 @@ async function loadPosts(page = 1) {
         }
     });
 
-    data = await response.json();
+    const data = await response.json();
 
     if (!data.success) {
         console.log('An error occurred while fetching posts.', data.message);
@@ -121,7 +121,7 @@ async function loadUser() {
         }
     });
 
-    json = await result.json();
+    const json = await result.json();
 
     return json.user;
 }
