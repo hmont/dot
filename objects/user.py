@@ -2,6 +2,8 @@ from datetime import datetime
 from typing import Any
 from typing import Mapping
 
+from sqlalchemy import RowMapping
+
 class User:
     def __init__(
         self,
@@ -27,7 +29,7 @@ class User:
 
 
     @classmethod
-    def from_mapping(cls, mapping: Mapping[str, Any]):
+    def from_mapping(cls, mapping: Mapping[str, Any] | RowMapping):
         return cls(
             username=mapping['username'],
             user_id=mapping['id'],

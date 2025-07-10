@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>dashboard | dot</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="{{ url_for('static', path='/css/base.css') }}" />
+    </head>
+    <body class="bg-gray-50 min-h-screen" onscroll="onScroll(event)" onmousewheel="onScroll(event)">
+        <!-- Navbar -->
+        <nav class="bg-white shadow-sm border-b fixed w-full z-10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-red-500"><a href="/feed">dot</a></h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <a href="/feed" class="text-gray-600 hover:text-red-500 transition">feed</a>
+                        <span class="text-gray-600">welcome back!</span>
+                        <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition" onclick="logout()">
+                            sign out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Alert Section -->
+        <div id="alert" class="hidden fixed top-20 left-1/2 transform -translate-x-1/2 z-50">
+            <div id="alert-success" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-md shadow-lg">
+                <span id="alert-success-message" class="block sm:inline">Settings updated successfully!</span>
+            </div>
+            <div id="alert-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md shadow-lg">
+                <span id="alert-error-message" class="block sm:inline">Failed to update settings. Please try again.</span>
+            </div>
+        </div>
+
+        <div class="pt-16 min-h-screen">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+                <div class="bg-white rounded-lg shadow-sm border p-6 mb-8">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">dashboard</h1>
+                    <p class="text-lg text-gray-600">manage your account and profile settings</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">profile settings</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="display-name" class="block text-sm font-medium text-gray-700 mb-1">display name</label>
+                                <input
+                                    type="text"
+                                    id="display-name"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    placeholder="your display name"
+                                    maxlength="50">
+                            </div>
+                            <div>
+                                <label for="username" class="block text-sm font-medium text-gray-700 mb-1" >username</label>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    placeholder="@username"
+                                    maxlength="30"
+                                    disabled>
+                            </div>
+                            <div>
+                                <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">bio</label>
+                                <textarea
+                                    id="bio"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm resize-none focus:border-red-500 focus:outline-none"
+                                    rows="3"
+                                    placeholder="tell us about yourself..."
+                                    maxlength="150"></textarea>
+                                <div class="text-right">
+                                    <span id="bio-count" class="text-sm text-gray-500">0/150</span>
+                                </div>
+                            </div>
+                            <button
+                                id="save-profile-btn"
+                                class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                                onclick="saveProfile()">
+                                save profile
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">account settings</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="current-password" class="block text-sm font-medium text-gray-700 mb-1">current password</label>
+                                <input
+                                    type="password"
+                                    id="current-password"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    placeholder="enter current password">
+                            </div>
+                            <div>
+                                <label for="new-password" class="block text-sm font-medium text-gray-700 mb-1">new password</label>
+                                <input
+                                    type="password"
+                                    id="new-password"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    placeholder="enter new password">
+                            </div>
+                            <div>
+                                <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">confirm new password</label>
+                                <input
+                                    type="password"
+                                    id="confirm-password"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    placeholder="confirm new password">
+                            </div>
+                            <button
+                                id="change-password-btn"
+                                class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                                onclick="changePassword()">
+                                change password
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">privacy settings</h2>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="profile-visibility" class="block text-sm font-medium text-gray-700">profile visibility</label>
+                                    <p class="text-sm text-gray-500">allow others to view your profile</p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    id="profile-visibility"
+                                    class="h-5 w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
+                                    checked>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <label for="email-notifications" class="block text-sm font-medium text-gray-700">email notifications</label>
+                                    <p class="text-sm text-gray-500">receive updates via email</p>
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    id="email-notifications"
+                                    class="h-5 w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
+                                    checked>
+                            </div>
+                            <button
+                                id="save-privacy-btn"
+                                class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
+                                onclick="savePrivacySettings()">
+                                save privacy settings
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg shadow-sm border border-red-200 p-6">
+                        <h2 class="text-xl font-bold text-red-600 mb-4">danger zone</h2>
+                        <div class="space-y-4">
+                            <div class="bg-red-50 rounded-md p-4">
+                                <h3 class="text-sm font-medium text-red-800">delete account</h3>
+                                <p class="text-sm text-red-700 mt-1">once you delete your account, there is no going back. <b>please be certain.</b></p>
+                                <p class="text-sm text-red-700 mt-1">if you just want to take a break from dot, consider privatizing your account in privacy settings.</p>
+
+
+                                <button
+                                    id="delete-account-btn"
+                                    class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition mt-3"
+                                    onclick="confirmDeleteAccount()">
+                                    delete account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="whoa-modal-container" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+            <div id="whoa-modal" class="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="p-8 text-center">
+                    <div class="mb-6">
+                        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 mb-4">
+                            <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-red-600 mb-4">whoa there!</h2>
+                        <p class="text-xl text-gray-700 mb-6">you're about to delete your account permanently</p>
+                    </div>
+
+                    <div class="bg-red-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-red-800 mb-3">this means:</h3>
+                        <ul class="space-y-2 text-red-700">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>all of your posts and content will be <b>permanently deleted</b></span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>your profile and all associated data will be removed</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>we won't be able to recover your account or any of your data</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-2">•</span>
+                                <span>this action is <strong>irreversible</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">if you just want to take a break, consider:</h3>
+                        <div class="space-y-3 text-gray-700">
+                            <div class="flex items-start">
+                                <span class="text-gray-500 mr-2">•</span>
+                                <span>making your profile private in privacy settings</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="text-gray-500 mr-2">•</span>
+                                <span>simply logging out for the time being</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button
+                            class="order-2 sm:order-1 bg-gray-200 text-gray-800 px-6 py-3 rounded-md hover:bg-gray-300 transition font-medium"
+                            onclick="closeWhoaModal()">
+                            keep my account
+                        </button>
+                        <button
+                            class="order-1 sm:order-2 bg-red-600 text-white px-6 py-3 rounded-md hover:bg-red-700 transition font-medium"
+                            onclick="proceedToDelete()">
+                            i understand, delete my account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 w-full text-center py-4 text-sm text-gray-800 mt-16">
+            <div>
+                copyright © 2025  <a href="https://henry.moe" class="text-red-500 hover:underline">Henry Monteith</a> & dot labs
+            </div>
+            <div>
+                powered by <a href="https://github.com/hmont/dot" class="text-red-500 hover:underline">dot</a>
+            </div>
+        </div>
+
+        <script src="{{ url_for('static', path='/js/logout.js') }}" type="module"></script>
+        <script src="{{ url_for('static', path='/js/dashboard.js') }}" type="module"></script>
+    </body>
+</html>

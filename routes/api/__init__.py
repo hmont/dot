@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from .posts import router as posts_router
 from .auth import router as auth_router
 from .users import router as users_router
+from .preferences import router as preferences_router
 
 api_router = APIRouter(prefix="/api")
 

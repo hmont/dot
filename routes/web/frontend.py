@@ -59,3 +59,8 @@ async def profile(request: Request, username: str):
             'user_id': user.id
         }
     )
+
+@frontend_router.get("/dashboard")
+@require_auth
+async def dashboard(request: Request):
+    return templates.TemplateResponse(name="dashboard.html", request=request)
