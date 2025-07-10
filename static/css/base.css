@@ -1,0 +1,40 @@
+@keyframes bounceInFromTop {
+    0% {
+        transform: translate(-50%, -200px);
+        opacity: 0;
+    }
+    60% {
+        transform: translate(-50%, 10px);
+        opacity: 1;
+    }
+    80% {
+        transform: translate(-50%, -5px);
+    }
+    100% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -20px);
+        opacity: 0;
+    }
+}
+
+html {
+    background-color: var(--color-gray-950);
+}
+
+.alert-bounce-in {
+    animation: bounceInFromTop 0.6s ease-out forwards;
+}
+
+.alert-fade-out {
+    animation: fadeOut 0.3s ease-in forwards;
+}
