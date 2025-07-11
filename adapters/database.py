@@ -20,19 +20,27 @@ class Database:
             await self.session.close()
 
 
-    async def execute(self, query: Executable) -> MappingResult:
+    async def execute(self, query: Executable) -> MappingResult | None:
         if not self.session:
             raise ValueError("You must connect() to the database first")
 
-        res = await self.session.execute(query)
+        try:
+            res = await self.session.execute(query)
 
-        await self.session.commit()
+            await self.session.commit()
 
-        return res.mappings()
+            return res.mappings()
+
+        except Exception as e:
+            await self.session.rollback()
+            raise e
 
 
     async def fetch_one(self, query: Executable):
         result = await self.execute(query)
+
+        if result is None:
+            return None
 
         return result.fetchone()
 
@@ -44,5 +52,8 @@ class Database:
         page_size: int = 5
     ):
         result = await self.execute(query)
+
+        if result is None:
+            return None
 
         return result.fetchmany(size=page_size)

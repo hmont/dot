@@ -85,4 +85,7 @@ async def fetch_many(
 
     result = await database.fetch_many(query)
 
+    if not result:
+        return []
+
     return [Post.from_mapping(mapping) for mapping in result]

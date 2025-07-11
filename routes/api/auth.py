@@ -55,7 +55,8 @@ async def register(request: Request):
         content['success'] = False
         content['message'] = 'another user already exists with this username'
 
-    return JSONResponse(content=content)
+    finally:
+        return JSONResponse(content=content)
 
 
 @router.post('/login')

@@ -10,9 +10,13 @@ from sqlalchemy import func
 from sqlalchemy import insert
 from sqlalchemy import select
 
+from sqlalchemy.orm import relationship
+
 from state.global_state import database
 
 from objects.user import User
+
+from tables import user_preferences
 
 from . import Base
 
@@ -73,15 +77,28 @@ class Users(Base):
 async def create(
     username: str,
     password_bytes: bytes,
-):
+) -> Optional[int]:
     stmt = insert(Users).values(
         username=username,
         display_name=username,
         password_bytes=password_bytes,
         privs=1
-    )
+    ).returning(Users._id)
 
-    await database.execute(stmt)
+    res = (await database.execute(stmt))
+
+    if not res:
+        return
+
+    mapping = res.first()
+
+    assert mapping is not None
+
+    user_id = mapping['id']
+
+    await user_preferences.create(user_id)
+
+    return user_id
 
 async def fetch_one(
     username: Optional[str] = None,
@@ -93,10 +110,10 @@ async def fetch_one(
     query = select(Users)
 
     if username:
-        query = query.where(Users.username == username)
+        query = query.where(Users.username == str(username))
 
     if user_id:
-        query = query.where(Users._id == user_id)
+        query = query.where(Users._id == int(user_id))
 
 
     result = await database.fetch_one(query)

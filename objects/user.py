@@ -3,6 +3,7 @@ from typing import Any
 from typing import Mapping
 
 from sqlalchemy import RowMapping
+from sqlalchemy import MappingResult
 
 class User:
     def __init__(
