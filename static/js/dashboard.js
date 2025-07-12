@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", async event => {
     profileVisiblityCheckbox.checked = preferences.is_private;
 
     usernameInput.value = `@${profileSettings.username}`;
-    bioInput.content = profileSettings.bio;
+    bioInput.value = profileSettings.bio;
     displayNameInput.value = profileSettings.display_name;
 });
 
