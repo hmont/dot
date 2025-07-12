@@ -10,7 +10,7 @@ from fastapi import Response
 
 from fastapi.responses import JSONResponse
 
-from asyncpg.exceptions import UniqueViolationError
+from sqlalchemy.exc import IntegrityError
 
 import bcrypt
 
@@ -51,12 +51,11 @@ async def register(request: Request):
             username=username,
             password_bytes=password_hashed
         )
-    except UniqueViolationError:
+    except IntegrityError:
         content['success'] = False
         content['message'] = 'another user already exists with this username'
 
-    finally:
-        return JSONResponse(content=content)
+    return JSONResponse(content=content)
 
 
 @router.post('/login')

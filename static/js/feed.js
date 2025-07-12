@@ -1,4 +1,4 @@
-import { showAlert } from "./main.js";
+import { showAlert, timeAgo } from "./main.js";
 
 const placeholders = [
     "something little that made today better...",
@@ -147,7 +147,7 @@ async function fetchPosts(page = 1, page_size = 5) {
                 <div id="post grid grid-cols-5 inline-block text-left">
                     <h2 class="text-gray-900 text-2xl font-bold align-middle inline-block hover:underline"><a href="/users/${username}">${display_name}</a></h2>
                     <span class="ml-2 text-gray-500 text-md align-middle hover:underline"><a href="/users/${username}">@${username}</a></span>
-                    <span title="${date}" class="ml-2 text-gray-500 text-md align-middle">${(new Date(date)).toDateString()}</span>
+                    <span title="${date}" class="ml-2 text-gray-500 text-md align-middle">${timeAgo(date)}</span>
                     <p>${content}</p>
                 </div>
             </div>

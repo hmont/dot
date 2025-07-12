@@ -9,7 +9,7 @@
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="{{ url_for('static', path='/css/base.css') }}" />
     </head>
-    <body class="bg-gray-50 min-h-screen" onscroll="onScroll(event)" onmousewheel="onScroll(event)">
+    <body class="bg-gray-50 min-h-screen" onmousewheel="onScroll(event)">
         <!-- Navbar -->
         <nav class="bg-white shadow-sm border-b fixed w-full z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,10 +64,13 @@
                                 <input
                                     type="text"
                                     id="username"
-                                    class="w-full border-2 rounded-md py-2 px-3 text-sm focus:border-red-500 focus:outline-none"
+                                    class="w-full border-2 rounded-md py-2 px-3 text-sm text-gray-400 focus:border-red-500 focus:outline-none"
                                     placeholder="@username"
                                     maxlength="30"
                                     disabled>
+                                <p class="text-sm text-gray-400"><i>you cannot edit your username via this page;
+                                    contact support to change your username
+                                </i></p>
                             </div>
                             <div>
                                 <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">bio</label>
@@ -84,7 +87,7 @@
                             <button
                                 id="save-profile-btn"
                                 class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-                                onclick="saveProfile()">
+                                onclick="saveProfileSettings()">
                                 save profile
                             </button>
                         </div>
@@ -120,7 +123,7 @@
                             <button
                                 id="change-password-btn"
                                 class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition"
-                                onclick="changePassword()">
+                                onclick="updatePassword()">
                                 change password
                             </button>
                         </div>
@@ -131,25 +134,13 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <label for="profile-visibility" class="block text-sm font-medium text-gray-700">profile visibility</label>
-                                    <p class="text-sm text-gray-500">allow others to view your profile</p>
+                                    <label for="profile-visibility" class="block text-sm font-medium text-gray-700">private profile</label>
+                                    <p class="text-sm text-gray-500 max-w-l">hide your profile and posts from others</p>
                                 </div>
                                 <input
                                     type="checkbox"
                                     id="profile-visibility"
-                                    class="h-5 w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
-                                    checked>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <label for="email-notifications" class="block text-sm font-medium text-gray-700">email notifications</label>
-                                    <p class="text-sm text-gray-500">receive updates via email</p>
-                                </div>
-                                <input
-                                    type="checkbox"
-                                    id="email-notifications"
-                                    class="h-5 w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded"
-                                    checked>
+                                    class="h-5 w-5 text-red-500 focus:ring-red-500 border-gray-300 rounded">
                             </div>
                             <button
                                 id="save-privacy-btn"

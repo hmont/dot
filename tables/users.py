@@ -9,6 +9,7 @@ from sqlalchemy import TIMESTAMP
 from sqlalchemy import func
 from sqlalchemy import insert
 from sqlalchemy import select
+from sqlalchemy import update
 
 from sqlalchemy.orm import relationship
 
@@ -119,3 +120,24 @@ async def fetch_one(
     result = await database.fetch_one(query)
 
     return User.from_mapping(result) if result else None
+
+
+async def update_one(
+    user_id: int,
+    username: Optional[str] = None,
+    display_name: Optional[str] = None,
+    password_hash: Optional[bytes] = None,
+    bio: Optional[str] = None
+):
+    stmt = update(Users).where(Users._id == user_id)
+
+    if username is not None:
+        stmt = stmt.values(username=username)
+    if display_name is not None:
+        stmt = stmt.values(display_name=display_name)
+    if bio is not None:
+        stmt = stmt.values(bio=bio)
+    if password_hash is not None:
+        stmt = stmt.values(password_bytes=password_hash)
+
+    await database.execute(stmt)
