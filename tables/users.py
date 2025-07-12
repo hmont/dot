@@ -11,14 +11,11 @@ from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
 
-from sqlalchemy.orm import relationship
-
 from state.global_state import database
 
 from objects.user import User
 
-from tables import user_preferences
-
+from . import user_preferences
 from . import Base
 
 class Users(Base):

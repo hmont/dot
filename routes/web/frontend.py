@@ -15,6 +15,7 @@ from utils.auth import get_user
 from state.global_state import classifier
 
 from tables import users
+from tables import user_preferences
 
 templates = Jinja2Templates("templates")
 
@@ -44,11 +45,25 @@ async def feed(request: Request):
     return templates.TemplateResponse(name="feed.html", request=request)
 
 @frontend_router.get("/users/{username}")
+@require_auth
 async def profile(request: Request, username: str):
     user = await users.fetch_one(username=username)
 
+    logged_in_user = await get_user(request)
+
     if not user:
         return templates.TemplateResponse(name="404.html", request=request)
+
+    prefs = await user_preferences.fetch_one(user.id)
+
+    if not prefs:
+        return templates.TemplateResponse(name="404.html", request=request)
+
+    if prefs.is_private and (
+        logged_in_user is None or logged_in_user.username != username
+    ):
+        return templates.TemplateResponse(name="private_profile.html", request=request)
+
 
     return templates.TemplateResponse(
         name="profile.html",

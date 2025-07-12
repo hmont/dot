@@ -21,15 +21,17 @@ class UserPreferences(Base):
     __tablename__ = 'user_preferences'
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)
+
     is_private = Column(Boolean, default=False)
 
 
 async def create(
     user_id: int
 ) -> Preferences | None:
-    stmt = insert(UserPreferences).values(
-        user_id=user_id
-    ).returning(UserPreferences.user_id)
+    stmt = (insert(UserPreferences)
+        .values(user_id=user_id)
+        .returning(UserPreferences.user_id)
+    )
 
     await database.execute(stmt)
 

@@ -13,13 +13,16 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import insert
 from sqlalchemy import select
 
-from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
-from . import Base
+from sqlalchemy.sql import func
 
 from state.global_state import database
 
 from objects.post import Post
+
+from . import user_preferences
+from . import Base
 
 class Posts(Base):
     __tablename__ = 'posts'
@@ -32,8 +35,7 @@ class Posts(Base):
 
     poster = Column(
         Integer,
-        ForeignKey('users.id'),
-        nullable=False
+        ForeignKey('users.id')
     )
 
     created_at = Column(
@@ -89,3 +91,40 @@ async def fetch_many(
         return []
 
     return [Post.from_mapping(mapping) for mapping in result]
+
+
+async def fetch_public(
+    auth_user_id: int,
+    poster: Optional[int] = None,
+    username: Optional[str] = None,
+    page: Optional[int] = None,
+    page_size: Optional[int] = None
+):
+    query = select(Posts)
+
+    query = query.order_by(Posts.created_at.desc())
+
+    if page and page_size:
+        query = query.limit(page_size).offset(page_size * (page - 1))
+
+    if poster:
+        query = query.where(Posts.poster == poster)
+
+    result = await database.fetch_many(query)
+
+    res = []
+
+    if not result:
+        return res
+
+    for mapping in result:
+        user_id = mapping['poster']
+
+        prefs = await user_preferences.fetch_one(user_id)
+
+        if not prefs or (prefs.is_private and user_id != auth_user_id):
+            continue
+
+        res.append(Post.from_mapping(mapping))
+
+    return res

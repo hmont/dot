@@ -9,6 +9,8 @@ from state.global_state import classifier
 
 from tables import posts
 
+from utils.auth import get_user
+
 router = APIRouter(prefix='/posts')
 
 @router.post('/create')
@@ -46,8 +48,12 @@ async def fetch_posts(
     p: Optional[int] = None,
     s: Optional[int] = None
 ):
-    _posts = await posts.fetch_many(
-        page=p, page_size=s, poster=u
+    user = await get_user(request)
+
+    assert user is not None
+
+    _posts = await posts.fetch_public(
+        auth_user_id=user.id, page=p, page_size=s, poster=u
     )
 
     content = {

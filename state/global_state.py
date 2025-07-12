@@ -1,7 +1,7 @@
 from redis.asyncio import Redis
 
-from adapters import Database
-from adapters import Classifier
+from adapters.database import Database
+from adapters.classifier import Classifier
 
 from utils import settings
 
