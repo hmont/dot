@@ -99,7 +99,7 @@ async def login(request: Request, response: Response):
 
 
 @router.post('/logout')
-@require_auth
+@require_auth(endpoint=True)
 async def logout(request: Request, response: Response):
     session_id = request.cookies.get('session_id')
 

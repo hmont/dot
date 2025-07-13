@@ -12,7 +12,7 @@ from tables import users
 router = APIRouter(prefix='/preferences')
 
 @router.post('/fetch')
-@require_auth
+@require_auth(endpoint=True)
 async def fetch(request: Request):
     user = await get_user(request)
 
@@ -30,7 +30,7 @@ async def fetch(request: Request):
     return preferences.to_dict()
 
 @router.post('/fetch_profile_settings')
-@require_auth
+@require_auth(endpoint=True)
 async def fetch_profile_settings(request: Request):
     user = await get_user(request)
 
@@ -42,7 +42,7 @@ async def fetch_profile_settings(request: Request):
 
 
 @router.post('/update_profile_settings')
-@require_auth
+@require_auth(endpoint=True)
 async def update_profile_settings(request: Request):
     user = await get_user(request)
 
@@ -62,7 +62,7 @@ async def update_profile_settings(request: Request):
 
 
 @router.post('/update_password')
-@require_auth
+@require_auth(endpoint=True)
 async def update_password(request: Request):
     user = await get_user(request)
 
@@ -97,7 +97,7 @@ async def update_password(request: Request):
 
 
 @router.post('/update')
-@require_auth
+@require_auth(endpoint=True)
 async def update(request: Request):
     user = await get_user(request)
 

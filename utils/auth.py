@@ -5,7 +5,10 @@ from typing import Optional
 from typing import cast
 
 from fastapi import Request
+
 from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse
+from fastapi.responses import JSONResponse
 
 from state.global_state import redis
 
@@ -13,39 +16,18 @@ from tables import users
 
 from objects.user import User
 
-def require_auth(func: Callable):
+async def get_user(request: Optional[Request]) -> Optional[User]:
+    if request is None:
+        raise ValueError('endpoints or pages using the @endpoint '
+                         'or @page decorator must include the request '
+                         'as a kwarg')
 
-    @functools.wraps(func)
-    async def wrapper(*args, **kwargs):
-        request = kwargs.get('request')
-
-        if request is None:
-            raise ValueError("Endpoints using the @require_auth decorator "
-                             "must include the request as an argument")
-
-        request = cast(Request, request)
-
-        session_id: Optional[str] = request.cookies.get('session_id')
-
-        if not session_id:
-            return RedirectResponse(url="/login")
-
-        redis_user = await redis.get(session_id)
-
-        if not redis_user:
-            return RedirectResponse(url="/login")
-
-        return await func(*args, **kwargs)
-
-    return wrapper
-
-async def get_user(request: Request) -> Optional[User]:
     session_id = request.cookies.get('session_id')
 
     if not session_id:
         return None
 
-    user_id = await redis.get(session_id)
+    user_id = await redis.get(session_id) if session_id else None
 
     if not user_id:
         return None
@@ -56,3 +38,32 @@ async def get_user(request: Request) -> Optional[User]:
         return None
 
     return user
+
+
+def require_auth(endpoint: bool = False):
+    """
+    Decorator to indicate that a webpage or API endpoint requires the user to be logged in (i.e. have a valid \
+    session ID).
+
+    Args:
+        endpoint (bool, optional): Whether this path is an \
+        API endpoint (True) or a page (False). Defaults to False.
+    """
+    def factory(func: Callable):
+
+        @functools.wraps(func)
+        async def wrapper(*args, **kwargs):
+            kwargs.pop('require_auth', None)
+
+            if require_auth and await get_user(kwargs.get('request')) is None:
+                if endpoint:
+                    return {
+                        'success': False,
+                        'message': 'this endpoint requires authentication'
+                    }
+                else:
+                    return RedirectResponse('/login')
+
+            return await func(*args, **kwargs)
+        return wrapper
+    return factory

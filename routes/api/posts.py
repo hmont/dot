@@ -14,7 +14,7 @@ from utils.auth import get_user
 router = APIRouter(prefix='/posts')
 
 @router.post('/create')
-@require_auth
+@require_auth(endpoint=True)
 async def create_post(request: Request):
     session_id = request.cookies['session_id']
 
@@ -41,7 +41,7 @@ async def create_post(request: Request):
     return {'success': True, 'message': 'post created successfully!'}
 
 @router.post('/fetch')
-@require_auth
+@require_auth(endpoint=True)
 async def fetch_posts(
     request: Request,
     u: Optional[int] = None,

@@ -6,11 +6,12 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
 from fastapi.responses import RedirectResponse
+from fastapi.responses import HTMLResponse
 
 import timeago
 
-from utils.auth import require_auth
 from utils.auth import get_user
+from utils.auth import require_auth
 
 from state.global_state import classifier
 
@@ -40,16 +41,18 @@ async def register(request: Request):
     return templates.TemplateResponse(name="register.html", request=request)
 
 @frontend_router.get("/feed")
-@require_auth
+@require_auth()
 async def feed(request: Request):
     return templates.TemplateResponse(name="feed.html", request=request)
 
 @frontend_router.get("/users/{username}")
-@require_auth
+@require_auth()
 async def profile(request: Request, username: str):
     user = await users.fetch_one(username=username)
 
     logged_in_user = await get_user(request)
+
+    assert logged_in_user is not None
 
     if not user:
         return templates.TemplateResponse(name="404.html", request=request)
@@ -59,9 +62,7 @@ async def profile(request: Request, username: str):
     if not prefs:
         return templates.TemplateResponse(name="404.html", request=request)
 
-    if prefs.is_private and (
-        logged_in_user is None or logged_in_user.username != username
-    ):
+    if prefs.is_private and logged_in_user.username != username:
         return templates.TemplateResponse(name="private_profile.html", request=request)
 
 
@@ -76,6 +77,6 @@ async def profile(request: Request, username: str):
     )
 
 @frontend_router.get("/dashboard")
-@require_auth
+@require_auth()
 async def dashboard(request: Request):
     return templates.TemplateResponse(name="dashboard.html", request=request)
