@@ -21,6 +21,8 @@ from state.global_state import database
 
 from objects.post import Post
 
+from .user_preferences import UserPreferences
+
 from . import user_preferences
 from . import Base
 
@@ -100,7 +102,14 @@ async def fetch_public(
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ):
-    query = select(Posts)
+    query = (
+        select(Posts, UserPreferences)
+        .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
+        .where(
+            (UserPreferences.is_private == False) |
+            (Posts.poster == auth_user_id)
+        )
+    )
 
     query = query.order_by(Posts.created_at.desc())
 
@@ -112,19 +121,7 @@ async def fetch_public(
 
     result = await database.fetch_many(query)
 
-    res = []
-
     if not result:
-        return res
+        return []
 
-    for mapping in result:
-        user_id = mapping['poster']
-
-        prefs = await user_preferences.fetch_one(user_id)
-
-        if not prefs or (prefs.is_private and user_id != auth_user_id):
-            continue
-
-        res.append(Post.from_mapping(mapping))
-
-    return res
+    return [Post.from_mapping(p) for p in result]

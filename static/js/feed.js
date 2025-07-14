@@ -109,7 +109,7 @@ async function createPost() {
     }
 
     contentInput.value = '';
-    charCount.value = '0/120';
+    charCount.innerText = '0/120';
     charCount.classList.remove("text-red-500");
 
     showAlert('success', 'post created!');
@@ -152,9 +152,6 @@ async function fetchPosts(page = 1, page_size = 5) {
                 </div>
             </div>
         `
-
-        // console.log(content);
-
 
         postsContainer.insertAdjacentHTML('beforeend', postHTML);
     }

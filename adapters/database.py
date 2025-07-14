@@ -1,12 +1,15 @@
+from typing import Optional
+
 from sqlalchemy import Executable
 from sqlalchemy import MappingResult
 
 from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.ext.asyncio import AsyncConnection
 
 class Database:
     def __init__(self, uri: str):
         self.engine = create_async_engine(uri)
-        self.session = None
+        self.session: Optional[AsyncConnection] = None
 
 
     async def connect(self) -> None:
