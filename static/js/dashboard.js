@@ -27,11 +27,7 @@ function confirmDeleteAccount() {
 function closeWhoaModal() {
     document.body.style.overflow = '';
 
-    //whoaModal.classList.add('hidden');
-    //whoaModalContainer.classList.add('hidden');
-
     whoaModal.classList.add('modal-slide-out');
-
 
     setTimeout(() => {
         whoaModal.classList.remove('modal-slide-out');
@@ -139,7 +135,6 @@ async function fetchPreferences() {
 
     return await preferences.json();
 }
-
 
 document.addEventListener("DOMContentLoaded", async event => {
     const preferences = await fetchPreferences();

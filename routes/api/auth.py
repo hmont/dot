@@ -86,7 +86,10 @@ async def login(request: Request, response: Response):
     response.set_cookie(
         key='session_id',
         value=session_id,
-        expires=expiry
+        expires=expiry,
+        httponly=True,
+        samesite='lax',
+        secure=True
     )
 
     await redis.set(
