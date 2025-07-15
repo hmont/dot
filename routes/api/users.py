@@ -3,8 +3,6 @@ from typing import Optional
 from fastapi import APIRouter
 from fastapi import Request
 
-from fastapi.responses import JSONResponse
-
 from tables import users as users_table
 from tables import user_preferences
 
@@ -17,7 +15,6 @@ router = APIRouter(prefix='/users')
 @require_auth(endpoint=True)
 async def fetch_user(
     request: Request,
-    response: JSONResponse,
     u: Optional[int] = None,
     name: Optional[str] = None,
 ):

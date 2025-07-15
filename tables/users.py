@@ -18,7 +18,7 @@ from objects.user import User
 from . import user_preferences
 from . import Base
 
-class Users(Base):
+class Users(Base): # pylint: ignore=too-few-public-methods
     __tablename__ = "users"
 
     _id = Column(
@@ -36,14 +36,14 @@ class Users(Base):
     created_at = Column(
         TIMESTAMP,
         nullable=False,
-        server_default=func.now()
+        server_default=func.now() # pylint: ignore=not-callable
     )
 
     updated_at = Column(
         TIMESTAMP,
         nullable=False,
-        server_default=func.now(),
-        onupdate=func.now()
+        server_default=func.now(), # pylint: ignore=not-callable
+        onupdate=func.now() # pylint: ignore=not-callable
     )
 
     password_bytes = Column(
@@ -83,7 +83,7 @@ async def create(
         privs=1
     ).returning(Users._id)
 
-    res = (await database.execute(stmt))
+    res = await database.execute(stmt)
 
     if not res:
         return

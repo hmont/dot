@@ -1,13 +1,13 @@
 from datetime import datetime
+
 from typing import Any
 from typing import Mapping
 
 from sqlalchemy import RowMapping
-from sqlalchemy import MappingResult
 
 class User:
-    def __init__(
-        self,
+    def __init__( # pylint: disable=too-many-instance-attributes,
+        self, # pylint: disable=too-many-arguments, too-many-positional-arguments
         username: str,
         display_name: str,
         user_id: int,
@@ -31,6 +31,12 @@ class User:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any] | RowMapping):
+        """
+        Convert a mapping into a User object.
+
+        Requires that the given mapping is a valid mapping (e.g. a dictionary or \
+        RowMapping).
+        """
         return cls(
             username=mapping['username'],
             user_id=mapping['id'],
@@ -48,6 +54,9 @@ class User:
         return f"User(id={self.id}, username='{self.username}')"
 
     def to_dict(self) -> dict:
+        """
+        Return a dictionary representation of the Preferences object.
+        """
         return {
             'id': self.id,
             'username': self.username,

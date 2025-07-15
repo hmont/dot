@@ -7,7 +7,7 @@ from typing import Dict
 from sqlalchemy import RowMapping
 
 class Post:
-    def __init__(
+    def __init__( # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
         post_id: int,
         poster_id: int,
@@ -24,6 +24,12 @@ class Post:
 
     @classmethod
     def from_mapping(cls, mapping: Mapping[str, Any] | RowMapping):
+        """
+        Convert a mapping into a Post object.
+
+        Requires that the given mapping is a valid mapping (e.g. a dictionary or \
+        RowMapping).
+        """
         return cls(
             post_id=mapping['id'],
             poster_id=mapping['poster'],
@@ -33,6 +39,9 @@ class Post:
         )
 
     def to_dict(self) -> Dict[str, Any]:
+        """
+        Return a dictionary representation of the Post object.
+        """
         return {
             'id': self.id,
             'poster': self.poster_id,

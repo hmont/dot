@@ -2,13 +2,10 @@ import functools
 
 from typing import Callable
 from typing import Optional
-from typing import cast
 
 from fastapi import Request
 
 from fastapi.responses import RedirectResponse
-from fastapi.responses import HTMLResponse
-from fastapi.responses import JSONResponse
 
 from state.global_state import redis
 
@@ -42,8 +39,8 @@ async def get_user(request: Optional[Request]) -> Optional[User]:
 
 def require_auth(endpoint: bool = False):
     """
-    Decorator to indicate that a webpage or API endpoint requires the user to be logged in (i.e. have a valid \
-    session ID).
+    Decorator to indicate that a webpage or API endpoint requires the user to be \
+    logged in (i.e. have a valid session ID).
 
     Args:
         endpoint (bool, optional): Whether this path is an \
@@ -56,13 +53,13 @@ def require_auth(endpoint: bool = False):
             kwargs.pop('require_auth', None)
 
             if require_auth and await get_user(kwargs.get('request')) is None:
-                if endpoint:
-                    return {
-                        'success': False,
-                        'message': 'this endpoint requires authentication'
-                    }
-                else:
+                if not endpoint:
                     return RedirectResponse('/login')
+
+                return {
+                    'success': False,
+                    'message': 'this endpoint requires authentication'
+                }
 
             return await func(*args, **kwargs)
         return wrapper

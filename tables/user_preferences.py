@@ -9,15 +9,13 @@ from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
 
-from sqlalchemy.orm import relationship
-
 from state.global_state import database
 
 from objects.preferences import Preferences
 
 from . import Base
 
-class UserPreferences(Base):
+class UserPreferences(Base): # pylint: ignore=too-few-public-methods
     __tablename__ = 'user_preferences'
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)

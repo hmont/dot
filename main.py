@@ -10,13 +10,12 @@ from utils import settings
 
 from state.global_state import classifier
 from state.global_state import database
-from state.global_state import redis
 
 from routes.web import web_router
 from routes.api import api_router
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(a: FastAPI): # pylint: disable=unused-argument
     classifier.setup()
     await database.connect()
     yield

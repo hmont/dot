@@ -29,6 +29,7 @@ async def fetch(request: Request):
 
     return preferences.to_dict()
 
+
 @router.post('/fetch_profile_settings')
 @require_auth(endpoint=True)
 async def fetch_profile_settings(request: Request):

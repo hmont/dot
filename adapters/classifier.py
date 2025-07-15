@@ -9,6 +9,12 @@ class Classifier:
         self.model = None
 
     def setup(self):
+        """
+        Initializes the classifier.
+
+        Requires that a model file be present in the 'model' directory.
+        """
+
         self.tokenizer = AutoTokenizer.from_pretrained('model')
         self.model = AutoModelForSequenceClassification.from_pretrained('model')
 

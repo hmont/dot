@@ -6,14 +6,11 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
 from fastapi.responses import RedirectResponse
-from fastapi.responses import HTMLResponse
 
 import timeago
 
 from utils.auth import get_user
 from utils.auth import require_auth
-
-from state.global_state import classifier
 
 from tables import users
 from tables import user_preferences
@@ -26,12 +23,14 @@ frontend_router = APIRouter()
 async def index(request: Request):
     return templates.TemplateResponse(name="index.html", request=request)
 
+
 @frontend_router.get("/login")
 async def login(request: Request):
     if await get_user(request) is not None:
         return RedirectResponse('/feed')
 
     return templates.TemplateResponse(name="login.html", request=request)
+
 
 @frontend_router.get("/register")
 async def register(request: Request):
@@ -40,10 +39,12 @@ async def register(request: Request):
 
     return templates.TemplateResponse(name="register.html", request=request)
 
+
 @frontend_router.get("/feed")
 @require_auth()
 async def feed(request: Request):
     return templates.TemplateResponse(name="feed.html", request=request)
+
 
 @frontend_router.get("/users/{username}")
 @require_auth()
@@ -75,6 +76,7 @@ async def profile(request: Request, username: str):
             'user_id': user.id
         }
     )
+
 
 @frontend_router.get("/dashboard")
 @require_auth()

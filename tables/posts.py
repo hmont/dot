@@ -13,8 +13,6 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import insert
 from sqlalchemy import select
 
-from sqlalchemy.orm import relationship
-
 from sqlalchemy.sql import func
 
 from state.global_state import database
@@ -23,10 +21,9 @@ from objects.post import Post
 
 from .user_preferences import UserPreferences
 
-from . import user_preferences
 from . import Base
 
-class Posts(Base):
+class Posts(Base): # pylint: ignore=too-few-public-methods
     __tablename__ = 'posts'
 
     _id = Column(
@@ -43,14 +40,14 @@ class Posts(Base):
     created_at = Column(
         TIMESTAMP,
         nullable=False,
-        default=func.now()
+        default=func.now() # pylint: ignore=not-callable
     )
 
     updated_at = Column(
         TIMESTAMP,
         nullable=False,
-        default=func.now(),
-        onupdate=func.now()
+        default=func.now(), # pylint: ignore=not-callable
+        onupdate=func.now() # pylint: ignore=not-callable
     )
 
     content = Column(
@@ -71,9 +68,9 @@ async def create(
 
     await database.execute(stmt)
 
+
 async def fetch_many(
     poster: Optional[int] = None,
-    username: Optional[str] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ) -> List[Post]:
@@ -98,7 +95,6 @@ async def fetch_many(
 async def fetch_public(
     auth_user_id: int,
     poster: Optional[int] = None,
-    username: Optional[str] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ):
@@ -107,7 +103,7 @@ async def fetch_public(
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
         .where(
             (UserPreferences.is_private == False) |
-            (Posts.poster == auth_user_id)
+            (Posts.poster == auth_user_id) # pylint: ignore=singleton-comparison
         )
     )
 

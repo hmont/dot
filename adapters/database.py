@@ -13,10 +13,16 @@ class Database:
 
 
     async def connect(self) -> None:
+        """
+        Connect to the database.
+        """
         self.session = await self.engine.connect()
 
 
     async def disconnect(self) -> None:
+        """
+        Disconnect from the database.
+        """
         await self.engine.dispose()
 
         if self.session:
@@ -24,6 +30,14 @@ class Database:
 
 
     async def execute(self, query: Executable) -> MappingResult | None:
+        """
+        Execute the given query.
+
+        Requires that the database be initialized (i.e. connect() has been called.)
+
+        Returns a MappingResult if the execution was successful, or None if an \
+        error is raised.
+        """
         if not self.session:
             raise ValueError("You must connect() to the database first")
 
@@ -36,10 +50,18 @@ class Database:
 
         except Exception as e:
             await self.session.rollback()
-            raise e
 
 
     async def fetch_one(self, query: Executable):
+        """
+        Fetch a row from the database with the given query.
+
+        Requires that the database be initialized (i.e. connect() has been called.)
+
+        Returns a RowMapping if a record was found, or None if no record is found or if \
+        an error is raised.
+        """
+
         result = await self.execute(query)
 
         if result is None:
@@ -51,9 +73,16 @@ class Database:
     async def fetch_many(
         self,
         query: Executable,
-        page: int = 1,
         page_size: int = 5
     ):
+        """
+        Fetch the specified number of rows from the database with the given query.
+
+        Requires that the database be initialized (i.e. connect() has been called.)
+
+        Returns a sequence of RowMappings containing each record, or None if an error is raised.
+        """
+
         result = await self.execute(query)
 
         if result is None:

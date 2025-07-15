@@ -2,13 +2,12 @@ from typing import Optional
 
 from fastapi import APIRouter, Request
 
-from utils.auth import require_auth
-
 from state.global_state import redis
 from state.global_state import classifier
 
 from tables import posts
 
+from utils.auth import require_auth
 from utils.auth import get_user
 
 router = APIRouter(prefix='/posts')
