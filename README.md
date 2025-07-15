@@ -53,3 +53,16 @@ Finally, test the configuration, and, assuming no errors, reload NGINX:
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+### Configure Dot settings
+Dot itself requires a PostgreSQL database as well as Redis.
+
+To configure access to these (or other options such as the host/port Dot runs on), first copy the example .env file to the project root directory:
+```bash
+# make sure you're in the project root directory!
+cd dot
+
+cp ext/.env.example .env
+```
+
+Then modify the configuration as needed.
