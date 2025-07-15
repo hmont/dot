@@ -18,7 +18,7 @@ from objects.user import User
 from . import user_preferences
 from . import Base
 
-class Users(Base): # pylint: ignore=too-few-public-methods
+class Users(Base): # pylint: disable=too-few-public-methods
     __tablename__ = "users"
 
     _id = Column(
@@ -36,14 +36,14 @@ class Users(Base): # pylint: ignore=too-few-public-methods
     created_at = Column(
         TIMESTAMP,
         nullable=False,
-        server_default=func.now() # pylint: ignore=not-callable
+        server_default=func.now() # pylint: disable=not-callable
     )
 
     updated_at = Column(
         TIMESTAMP,
         nullable=False,
-        server_default=func.now(), # pylint: ignore=not-callable
-        onupdate=func.now() # pylint: ignore=not-callable
+        server_default=func.now(), # pylint: disable=not-callable
+        onupdate=func.now() # pylint: disable=not-callable
     )
 
     password_bytes = Column(
@@ -81,7 +81,7 @@ async def create(
         display_name=username,
         password_bytes=password_bytes,
         privs=1
-    ).returning(Users._id)
+    ).returning(Users._id) # pylint: disable=protected-access
 
     res = await database.execute(stmt)
 
@@ -111,7 +111,7 @@ async def fetch_one(
         query = query.where(Users.username == str(username))
 
     if user_id:
-        query = query.where(Users._id == int(user_id))
+        query = query.where(Users._id == int(user_id)) # pylint: disable=protected-access
 
 
     result = await database.fetch_one(query)
@@ -126,7 +126,7 @@ async def update_one(
     password_hash: Optional[bytes] = None,
     bio: Optional[str] = None
 ):
-    stmt = update(Users).where(Users._id == user_id)
+    stmt = update(Users).where(Users._id == user_id) # pylint: disable=protected-access
 
     if username is not None:
         stmt = stmt.values(username=username)

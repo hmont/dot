@@ -5,9 +5,9 @@ from typing import Mapping
 
 from sqlalchemy import RowMapping
 
-class User:
-    def __init__( # pylint: disable=too-many-instance-attributes,
-        self, # pylint: disable=too-many-arguments, too-many-positional-arguments
+class User: # pylint: disable=too-many-instance-attributes
+    def __init__( # pylint: disable=too-many-arguments, too-many-positional-arguments
+        self,
         username: str,
         display_name: str,
         user_id: int,

@@ -15,7 +15,7 @@ from objects.preferences import Preferences
 
 from . import Base
 
-class UserPreferences(Base): # pylint: ignore=too-few-public-methods
+class UserPreferences(Base): # pylint: disable=too-few-public-methods
     __tablename__ = 'user_preferences'
 
     user_id = Column(Integer, ForeignKey('users.id'), primary_key=True)

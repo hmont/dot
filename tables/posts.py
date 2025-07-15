@@ -23,7 +23,7 @@ from .user_preferences import UserPreferences
 
 from . import Base
 
-class Posts(Base): # pylint: ignore=too-few-public-methods
+class Posts(Base): # pylint: disable=too-few-public-methods
     __tablename__ = 'posts'
 
     _id = Column(
@@ -40,14 +40,14 @@ class Posts(Base): # pylint: ignore=too-few-public-methods
     created_at = Column(
         TIMESTAMP,
         nullable=False,
-        default=func.now() # pylint: ignore=not-callable
+        default=func.now() # pylint: disable=not-callable
     )
 
     updated_at = Column(
         TIMESTAMP,
         nullable=False,
-        default=func.now(), # pylint: ignore=not-callable
-        onupdate=func.now() # pylint: ignore=not-callable
+        default=func.now(), # pylint: disable=not-callable
+        onupdate=func.now() # pylint: disable=not-callable
     )
 
     content = Column(
@@ -103,7 +103,7 @@ async def fetch_public(
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
         .where(
             (UserPreferences.is_private == False) |
-            (Posts.poster == auth_user_id) # pylint: ignore=singleton-comparison
+            (Posts.poster == auth_user_id) # pylint: disable=singleton-comparison
         )
     )
 
