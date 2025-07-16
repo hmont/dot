@@ -40,7 +40,7 @@ async def fetch_user(
     prefs = await user_preferences.fetch_one(user.id)
 
     if prefs is not None and prefs.is_private and req_user.id != user.id:
-        return {'success': False, 'is_private': True}
+        return {'success': True, 'is_private': True}
 
     content = user.to_dict()
 

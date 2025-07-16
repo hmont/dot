@@ -21,7 +21,7 @@ from . import Base
 class Users(Base): # pylint: disable=too-few-public-methods
     __tablename__ = "users"
 
-    _id = Column(
+    user_id = Column(
         Integer,
         name="id",
         autoincrement=True,
@@ -81,7 +81,7 @@ async def create(
         display_name=username,
         password_bytes=password_bytes,
         privs=1
-    ).returning(Users._id) # pylint: disable=protected-access
+    ).returning(Users.user_id) # pylint: disable=protected-access
 
     res = await database.execute(stmt)
 
@@ -111,7 +111,7 @@ async def fetch_one(
         query = query.where(Users.username == str(username))
 
     if user_id:
-        query = query.where(Users._id == int(user_id)) # pylint: disable=protected-access
+        query = query.where(Users.user_id == int(user_id)) # pylint: disable=protected-access
 
 
     result = await database.fetch_one(query)
@@ -126,7 +126,7 @@ async def update_one(
     password_hash: Optional[bytes] = None,
     bio: Optional[str] = None
 ):
-    stmt = update(Users).where(Users._id == user_id) # pylint: disable=protected-access
+    stmt = update(Users).where(Users.user_id == user_id) # pylint: disable=protected-access
 
     if username is not None:
         stmt = stmt.values(username=username)

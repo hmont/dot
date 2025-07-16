@@ -2,6 +2,7 @@ from datetime import datetime
 
 from typing import Any
 from typing import Mapping
+from typing import Dict
 
 from sqlalchemy import RowMapping
 
@@ -53,9 +54,9 @@ class User: # pylint: disable=too-many-instance-attributes
     def __repr__(self) -> str:
         return f"User(id={self.id}, username='{self.username}')"
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         """
-        Return a dictionary representation of the Preferences object.
+        Return a Dict representation of the Preferences object.
         """
         return {
             'id': self.id,

@@ -97,7 +97,7 @@ async def fetch_public(
     poster: Optional[int] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None
-):
+) -> List[Post]:
     query = (
         select(Posts, UserPreferences)
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
