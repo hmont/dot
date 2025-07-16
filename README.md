@@ -19,8 +19,10 @@ curl -sSL https://install.python-poetry.org | python3 -
 
 Then, install the project dependencies:
 ```bash
+# make sure you're in the project root directory!
 cd dot
-poetry install
+
+poetry install --no-root
 ```
 
 ### Install sentiment analysis model
