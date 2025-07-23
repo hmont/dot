@@ -19,6 +19,7 @@ from tables import users
 from state.global_state import redis
 
 from utils.auth import require_auth
+from utils.auth import logout as _logout
 
 router = APIRouter(prefix='/auth')
 
@@ -104,12 +105,4 @@ async def login(request: Request, response: Response):
 @router.post('/logout')
 @require_auth(endpoint=True)
 async def logout(request: Request, response: Response):
-    session_id = request.cookies.get('session_id')
-
-    assert session_id is not None
-
-    await redis.delete(session_id)
-
-    response.delete_cookie('session_id')
-
-    return {'success': True, 'message': 'logged out'}
+    return await _logout(request=request, response=response)

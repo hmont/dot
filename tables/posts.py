@@ -12,6 +12,7 @@ from sqlalchemy import TIMESTAMP
 from sqlalchemy import ForeignKey
 from sqlalchemy import insert
 from sqlalchemy import select
+from sqlalchemy import delete as _delete
 
 from sqlalchemy.sql import func
 
@@ -102,8 +103,8 @@ async def fetch_public(
         select(Posts, UserPreferences)
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
         .where(
-            (UserPreferences.is_private == False) |
-            (Posts.poster == auth_user_id) # pylint: disable=singleton-comparison
+            (UserPreferences.is_private == False) |  # pylint: disable=singleton-comparison
+            (Posts.poster == auth_user_id)
         )
     )
 
@@ -121,3 +122,10 @@ async def fetch_public(
         return []
 
     return [Post.from_mapping(p) for p in result]
+
+async def delete(
+    poster_id: int
+):
+    stmt = _delete(Posts).where(Posts.poster == poster_id)
+
+    await database.execute(stmt)

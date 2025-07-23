@@ -8,6 +8,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="stylesheet" href="/static/css/base.css" />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/solid.min.css"
+            integrity="sha512-SRwBRtvmT+LZLST1GBrRec8GROqtjKU1NK23RKSpdL6IRzn2xPeOfBYSeIlc/9iXYagKB5IX6MyKZF1nq4a1fw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
     </head>
     <body class="bg-gray-50 min-h-screen">
         <!-- Navbar -->
@@ -17,8 +24,11 @@
                     <div class="flex items-center">
                         <h1 class="text-2xl font-bold text-red-500"><a href="/feed">dot</a></h1>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-gray-600">welcome back!</span>
+
+                    <div class="flex items-center space-x-8">
+                        <a href="/feed" class="text-gray-600 hover:text-red-500 transition">feed</a>
+                        <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
+                        <a href="/users/{{ username }}" class="text-gray-600 hover:text-red-500 transition">{{ username }}</a>
                         <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition" onclick="logout()">
                             sign out
                         </button>

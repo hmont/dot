@@ -43,7 +43,15 @@ async def register(request: Request):
 @frontend_router.get("/feed")
 @require_auth()
 async def feed(request: Request):
-    return templates.TemplateResponse(name="feed.html", request=request)
+    user = await get_user(request)
+
+    assert user is not None
+
+    return templates.TemplateResponse(
+        name="feed.html",
+        request=request,
+        context={'username': user.username}
+    )
 
 
 @frontend_router.get("/users/{username}")
@@ -55,13 +63,23 @@ async def profile(request: Request, username: str):
 
     assert logged_in_user is not None
 
+    context = {"username": logged_in_user.username}
+
     if not user:
-        return templates.TemplateResponse(name="404.html", request=request)
+        return templates.TemplateResponse(
+            name="404.html",
+            request=request,
+            context=context
+        )
 
     prefs = await user_preferences.fetch_one(user.id)
 
     if not prefs:
-        return templates.TemplateResponse(name="404.html", request=request)
+        return templates.TemplateResponse(
+            name="404.html",
+            request=request,
+            context=context
+        )
 
     if prefs.is_private and logged_in_user.username != username:
         return templates.TemplateResponse(name="private_profile.html", request=request)
@@ -73,7 +91,8 @@ async def profile(request: Request, username: str):
         context={
             'user': user,
             'time_ago': timeago.format(user.created_at, datetime.now()),
-            'user_id': user.id
+            'user_id': user.id,
+            'current_username': logged_in_user.username
         }
     )
 
@@ -81,4 +100,11 @@ async def profile(request: Request, username: str):
 @frontend_router.get("/dashboard")
 @require_auth()
 async def dashboard(request: Request):
-    return templates.TemplateResponse(name="dashboard.html", request=request)
+    user = await get_user(request)
+
+    assert user is not None
+
+    return templates.TemplateResponse(
+        name="dashboard.html",
+        request=request,
+        context={'username': user.username})

@@ -10,6 +10,7 @@ from sqlalchemy import func
 from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
+from sqlalchemy import delete as _delete
 
 from state.global_state import database
 
@@ -126,7 +127,7 @@ async def update_one(
     password_hash: Optional[bytes] = None,
     bio: Optional[str] = None
 ):
-    stmt = update(Users).where(Users.user_id == user_id) # pylint: disable=protected-access
+    stmt = update(Users).where(Users.user_id == user_id)
 
     if username is not None:
         stmt = stmt.values(username=username)
@@ -136,5 +137,19 @@ async def update_one(
         stmt = stmt.values(bio=bio)
     if password_hash is not None:
         stmt = stmt.values(password_bytes=password_hash)
+
+    await database.execute(stmt)
+
+
+async def delete_one(
+    user_id: Optional[int] = None,
+    username: Optional[str] = None
+):
+    stmt = _delete(Users)
+
+    if user_id:
+        stmt = stmt.where(Users.user_id == user_id)
+    if username:
+        stmt = stmt.where(Users.username == username)
 
     await database.execute(stmt)

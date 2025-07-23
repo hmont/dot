@@ -8,9 +8,13 @@ let usernameInput = document.querySelector('#username');
 let bioInput = document.querySelector('#bio');
 let profileVisiblityCheckbox = document.querySelector('#profile-visibility');
 
+let bioCount = document.querySelector('#bio-count');
+
 let currentPasswordInput = document.querySelector('#current-password');
 let newPasswordInput = document.querySelector('#new-password');
 let confirmPasswordInput = document.querySelector('#confirm-password');
+
+let deletePasswordInput = document.querySelector('#delete-password-input');
 
 function confirmDeleteAccount() {
     document.body.style.overflow = 'hidden';
@@ -35,6 +39,18 @@ function closeWhoaModal() {
         whoaModal.classList.add('hidden');
     }, 300);
 }
+
+bioInput.addEventListener('input', () => {
+    const newLength = bioInput.value.length;
+
+    bioCount.textContent = `${newLength}/150`;
+
+    if (newLength >= 110) {
+        bioCount.classList.add('text-red-500');
+    } else {
+        bioCount.classList.remove('text-red-500');
+    }
+});
 
 async function savePrivacySettings() {
     let isPrivate = profileVisiblityCheckbox.checked;
@@ -136,6 +152,30 @@ async function fetchPreferences() {
     return await preferences.json();
 }
 
+async function proceedToDelete() {
+    await fetch(`/api/account/delete`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            password: deletePasswordInput.value
+        })
+    }).then(response => {
+        return response.json();
+    }).then(data => {
+        let type = data.success ? 'success' : 'error';
+
+        showAlert(type, data.message);
+
+        if (data.success) {
+            setTimeout(() => {
+                window.location.href = '/'
+            }, 3000);
+        }
+    });
+}
+
 document.addEventListener("DOMContentLoaded", async event => {
     const preferences = await fetchPreferences();
     const profileSettings = await fetchProfileSettings();
@@ -143,8 +183,12 @@ document.addEventListener("DOMContentLoaded", async event => {
     profileVisiblityCheckbox.checked = preferences.is_private;
 
     usernameInput.value = `@${profileSettings.username}`;
-    bioInput.value = profileSettings.bio;
     displayNameInput.value = profileSettings.display_name;
+    bioInput.value = profileSettings.bio;
+
+    bioInput.dispatchEvent(new Event('input'));
+    bioCount.textContent = `${bioInput.value.length}/150`
+    displayNameInput.innerHTML = profileSettings.display_name;
 });
 
 window.confirmDeleteAccount = confirmDeleteAccount;
@@ -153,3 +197,4 @@ window.savePrivacySettings = savePrivacySettings;
 window.saveProfileSettings = saveProfileSettings;
 window.fetchPreferences = fetchPreferences;
 window.updatePassword = updatePassword;
+window.proceedToDelete = proceedToDelete;

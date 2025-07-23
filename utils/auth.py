@@ -4,6 +4,7 @@ from typing import Callable
 from typing import Optional
 
 from fastapi import Request
+from fastapi import Response
 
 from fastapi.responses import RedirectResponse
 
@@ -64,3 +65,16 @@ def require_auth(endpoint: bool = False):
             return await func(*args, **kwargs)
         return wrapper
     return factory
+
+
+async def logout(request: Request, response: Response):
+    session_id = request.cookies.get('session_id')
+
+    if session_id is None:
+        return {'success': False, 'message': 'not logged in'}
+
+    await redis.delete(session_id)
+
+    response.delete_cookie('session_id')
+
+    return {'success': True, 'message': 'logged out'}

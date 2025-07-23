@@ -12,17 +12,14 @@ export function showAlert(type, message = null) {
     errorAlert.classList.add('hidden');
 
     setTimeout(() => {
-        if (type === 'success') {
-            alertContainer.classList.remove('hidden');
-            successAlert.classList.remove('hidden');
-            alertContainer.classList.add('alert-bounce-in');
+        alertContainer.classList.remove('hidden');
+        alertContainer.classList.add('alert-bounce-in');
 
+        if (type === 'success') {
+            successAlert.classList.remove('hidden');
             successMessage.textContent = message;
         } else if (type === 'error') {
-            alertContainer.classList.remove('hidden');
             errorAlert.classList.remove('hidden');
-            alertContainer.classList.add('alert-bounce-in');
-
             errorMessage.textContent = message;
         }
     }, 10);

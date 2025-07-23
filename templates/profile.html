@@ -22,11 +22,13 @@
                 <div class="flex items-center">
                 <h1 class="text-2xl font-bold text-red-500"><a href="/feed">dot</a></h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                <span class="text-gray-600">welcome back!</span>
-                <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition">
-                    <a href="/logout">sign out</a>
-                </button>
+                <div class="flex items-center space-x-8">
+                    <a href="/feed" class="text-gray-600 hover:text-red-500 transition">feed</a>
+                    <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
+                    <a href="/users/{{ current_username }}" class="text-gray-600 hover:text-red-500 transition">{{ current_username }}</a>
+                    <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition">
+                        <a href="/logout">sign out</a>
+                    </button>
                 </div>
             </div>
             </div>

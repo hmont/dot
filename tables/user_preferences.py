@@ -8,6 +8,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import insert
 from sqlalchemy import select
 from sqlalchemy import update
+from sqlalchemy import delete as _delete
 
 from state.global_state import database
 
@@ -61,5 +62,12 @@ async def update_one(
 
     if is_private is not None:
         stmt = stmt.values(is_private=is_private)
+
+    await database.execute(stmt)
+
+async def delete_one(
+    user_id: int
+):
+    stmt = _delete(UserPreferences).where(UserPreferences.user_id == user_id)
 
     await database.execute(stmt)
