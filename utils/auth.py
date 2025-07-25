@@ -59,7 +59,7 @@ def require_auth(endpoint: bool = False):
 
                 return {
                     'success': False,
-                    'message': 'this endpoint requires authentication'
+                    'message': 'you must login or sign up to do this'
                 }
 
             return await func(*args, **kwargs)

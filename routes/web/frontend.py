@@ -41,29 +41,27 @@ async def register(request: Request):
 
 
 @frontend_router.get("/feed")
-@require_auth()
+# @require_auth()
 async def feed(request: Request):
     user = await get_user(request)
 
-    assert user is not None
+    # assert user is not None
 
     return templates.TemplateResponse(
         name="feed.html",
         request=request,
-        context={'username': user.username}
+        context={'username': user.username if user else ''}
     )
 
 
 @frontend_router.get("/users/{username}")
-@require_auth()
+# @require_auth()
 async def profile(request: Request, username: str):
     user = await users.fetch_one(username=username)
 
     logged_in_user = await get_user(request)
 
-    assert logged_in_user is not None
-
-    context = {"username": logged_in_user.username}
+    context = {"username": logged_in_user.username if logged_in_user else ""}
 
     if not user:
         return templates.TemplateResponse(
@@ -81,7 +79,7 @@ async def profile(request: Request, username: str):
             context=context
         )
 
-    if prefs.is_private and logged_in_user.username != username:
+    if prefs.is_private and (not logged_in_user or logged_in_user.username != username):
         return templates.TemplateResponse(name="private_profile.html", request=request)
 
 
@@ -92,7 +90,7 @@ async def profile(request: Request, username: str):
             'user': user,
             'time_ago': timeago.format(user.created_at, datetime.now()),
             'user_id': user.id,
-            'current_username': logged_in_user.username
+            'current_username': logged_in_user.username if logged_in_user else ''
         }
     )
 

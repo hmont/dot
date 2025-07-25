@@ -94,7 +94,7 @@ async def fetch_many(
 
 
 async def fetch_public(
-    auth_user_id: int,
+    auth_user_id: Optional[int] = None,
     poster: Optional[int] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None
@@ -102,11 +102,15 @@ async def fetch_public(
     query = (
         select(Posts, UserPreferences)
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
-        .where(
+    )
+
+    if auth_user_id:
+        query = query.where(
             (UserPreferences.is_private == False) |  # pylint: disable=singleton-comparison
             (Posts.poster == auth_user_id)
         )
-    )
+    else:
+        query = query.where(UserPreferences.is_private == False)
 
     query = query.order_by(Posts.created_at.desc())
 

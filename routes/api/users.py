@@ -12,7 +12,7 @@ from utils.auth import get_user
 router = APIRouter(prefix='/users')
 
 @router.post('/fetch')
-@require_auth(endpoint=True)
+#@require_auth(endpoint=True)
 async def fetch_user(
     request: Request,
     u: Optional[int] = None,
@@ -20,8 +20,6 @@ async def fetch_user(
 ):
     kwargs = {}
     req_user = await get_user(request)
-
-    assert req_user is not None
 
     if not u and not name:
         return {'success': False, 'message': 'one of u or name must be provided'}
@@ -39,7 +37,9 @@ async def fetch_user(
 
     prefs = await user_preferences.fetch_one(user.id)
 
-    if prefs is not None and prefs.is_private and req_user.id != user.id:
+    if prefs is not None and prefs.is_private and (
+        not req_user or req_user.id != user.id
+    ):
         return {'success': True, 'is_private': True}
 
     content = user.to_dict()

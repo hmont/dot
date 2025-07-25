@@ -40,7 +40,7 @@ async def create_post(request: Request):
     return {'success': True, 'message': 'post created successfully!'}
 
 @router.post('/fetch')
-@require_auth(endpoint=True)
+# @require_auth(endpoint=True)
 async def fetch_posts(
     request: Request,
     u: Optional[int] = None,
@@ -49,10 +49,10 @@ async def fetch_posts(
 ):
     user = await get_user(request)
 
-    assert user is not None
+    user_id = user.id if user else None
 
     _posts = await posts.fetch_public(
-        auth_user_id=user.id, page=p, page_size=s, poster=u
+        auth_user_id=user_id, page=p, page_size=s, poster=u
     )
 
     content = {
