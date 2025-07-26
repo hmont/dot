@@ -18,6 +18,8 @@ from tables import users
 
 from state.global_state import redis
 
+from utils import settings
+
 from utils.auth import require_auth
 from utils.auth import logout as _logout
 
@@ -25,6 +27,16 @@ router = APIRouter(prefix='/auth')
 
 @router.post('/register')
 async def register(request: Request):
+    """
+    The endpoint for account creation.
+    """
+    if not settings.REGISTRATION_ENABLED:
+        return {
+            'success': False,
+            'message': 'registration is disabled for this '
+                       'instance'
+        }
+
     body = await request.json()
 
     username: str = body['username']
@@ -61,6 +73,9 @@ async def register(request: Request):
 
 @router.post('/login')
 async def login(request: Request, response: Response):
+    """
+    The endpoint for account login.
+    """
     body = await request.json()
 
     username: str = body['username']
@@ -105,4 +120,9 @@ async def login(request: Request, response: Response):
 @router.post('/logout')
 @require_auth(endpoint=True)
 async def logout(request: Request, response: Response):
+    """
+    The endpoint for account logout.
+
+    Requires that the user be logged in.
+    """
     return await _logout(request=request, response=response)

@@ -25,6 +25,9 @@ from .user_preferences import UserPreferences
 from . import Base
 
 class Posts(Base): # pylint: disable=too-few-public-methods
+    """
+    Class representing the `posts` table in the database.
+    """
     __tablename__ = 'posts'
 
     _id = Column(
@@ -60,6 +63,13 @@ async def create(
     poster: int,
     content: str
 ) -> None:
+    """
+    Insert a post into the database with the given poster ID and content.
+
+    Args:
+        poster (int): The user ID of the poster of the post.
+        content (str): The content of the post.
+    """
     cleaned = bleach.clean(content)
 
     stmt = insert(Posts).values(
@@ -75,6 +85,9 @@ async def fetch_many(
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ) -> List[Post]:
+    """
+    Deprecated.
+    """
     query = select(Posts)
 
     query = query.order_by(Posts.created_at.desc())
@@ -99,6 +112,18 @@ async def fetch_public(
     page: Optional[int] = None,
     page_size: Optional[int] = None
 ) -> List[Post]:
+    """
+    Fetch public posts (or posts matching the given user ID) from the database.
+
+    Args:
+        auth_user_id (Optional[int], optional): The user ID of the currently logged in user.
+        poster (Optional[int], optional): The user ID of the poster of posts to be fetched.
+        page (Optional[int], optional): The page to be fetched.
+        page_size (Optional[int], optional): The size of respective pages.
+
+    Returns:
+        List[Post]: The list of Posts fetched.
+    """
     query = (
         select(Posts, UserPreferences)
         .join_from(Posts, UserPreferences, Posts.poster == UserPreferences.user_id)
@@ -110,7 +135,7 @@ async def fetch_public(
             (Posts.poster == auth_user_id)
         )
     else:
-        query = query.where(UserPreferences.is_private == False)
+        query = query.where(UserPreferences.is_private == False) # pylint: disable=singleton-comparison
 
     query = query.order_by(Posts.created_at.desc())
 
@@ -130,6 +155,12 @@ async def fetch_public(
 async def delete(
     poster_id: int
 ):
+    """
+    Delete all posts matching the given poster ID.
+
+    Args:
+        poster_id (int): The user ID of the poster of posts to be deleted.
+    """
     stmt = _delete(Posts).where(Posts.poster == poster_id)
 
     await database.execute(stmt)

@@ -7,6 +7,9 @@ from typing import Dict
 from sqlalchemy import RowMapping
 
 class Post:
+    """
+    Class representing a post.
+    """
     def __init__( # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
         post_id: int,

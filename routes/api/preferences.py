@@ -14,6 +14,9 @@ router = APIRouter(prefix='/preferences')
 @router.post('/fetch')
 @require_auth(endpoint=True)
 async def fetch(request: Request):
+    """
+    The endpoint for fetching user preferences (e.g. private profile)
+    """
     user = await get_user(request)
 
     if not user:
@@ -33,6 +36,16 @@ async def fetch(request: Request):
 @router.post('/fetch_profile_settings')
 @require_auth(endpoint=True)
 async def fetch_profile_settings(request: Request):
+    """
+    The endpoint for fetching user profile settings \
+    (e.g. username, biography).
+
+    This takes no query parameters, so it is intended to \
+    be used with the dashboard as it gets the user to fetch \
+    implicitly.
+
+    Requires the user to be logged in.
+    """
     user = await get_user(request)
 
     if not user:
@@ -45,6 +58,17 @@ async def fetch_profile_settings(request: Request):
 @router.post('/update_profile_settings')
 @require_auth(endpoint=True)
 async def update_profile_settings(request: Request):
+    """
+    The endpoint for updating user profile settings \
+    (e.g. username, biography).
+
+    This ONLY allows for updating the user's user ID,
+    display name, and biography.
+
+    Requires the user to be logged in as it also gets \
+    the user to be updated implicitly (see the \
+    fetch_profile_settings endpoint).
+    """
     user = await get_user(request)
 
     if not user:
@@ -65,6 +89,11 @@ async def update_profile_settings(request: Request):
 @router.post('/update_password')
 @require_auth(endpoint=True)
 async def update_password(request: Request):
+    """
+    The endpoint for updating a user's password.
+
+    Requires the user to be logged in.
+    """
     user = await get_user(request)
 
     if not user:
@@ -100,6 +129,12 @@ async def update_password(request: Request):
 @router.post('/update')
 @require_auth(endpoint=True)
 async def update(request: Request):
+    """
+    The endpoint for updating a user's privacy settings (i.e. \
+    whether they have a private profile).
+
+    Requires the user to be logged in.
+    """
     user = await get_user(request)
 
     if not user:

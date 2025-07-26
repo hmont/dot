@@ -5,6 +5,9 @@ from typing import Dict
 from sqlalchemy import RowMapping
 
 class Preferences:
+    """
+    Class representing a user Preferences object.
+    """
     def __init__(
         self,
         user_id: int,

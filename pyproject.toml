@@ -23,6 +23,8 @@ timeago = "^1.0.16"
 bleach = "^6.2.0"
 sqlalchemy = {extras = ["asyncpg"], version = "^2.0.41"}
 mypy = "^1.16.1"
+setuptools = "^80.9.0"
+pylint = "^3.3.7"
 
 
 [build-system]

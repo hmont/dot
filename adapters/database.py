@@ -7,6 +7,9 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 class Database:
+    """
+    Class representing the database connection.
+    """
     def __init__(self, uri: str):
         self.engine = create_async_engine(uri)
         self.session: Optional[AsyncConnection] = None
@@ -48,7 +51,8 @@ class Database:
 
             return res.mappings()
 
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-exception-caught
+            print(e)
             await self.session.rollback()
 
 

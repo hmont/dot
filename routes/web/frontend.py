@@ -21,11 +21,17 @@ frontend_router = APIRouter()
 
 @frontend_router.get("/")
 async def index(request: Request):
+    """
+    Homepage
+    """
     return templates.TemplateResponse(name="index.html", request=request)
 
 
 @frontend_router.get("/login")
 async def login(request: Request):
+    """
+    Login page (/login)
+    """
     if await get_user(request) is not None:
         return RedirectResponse('/feed')
 
@@ -34,6 +40,9 @@ async def login(request: Request):
 
 @frontend_router.get("/register")
 async def register(request: Request):
+    """
+    Registration page (/register)
+    """
     if await get_user(request) is not None:
         return RedirectResponse('/feed')
 
@@ -43,6 +52,9 @@ async def register(request: Request):
 @frontend_router.get("/feed")
 # @require_auth()
 async def feed(request: Request):
+    """
+    Feed page (/feed)
+    """
     user = await get_user(request)
 
     # assert user is not None
@@ -57,6 +69,9 @@ async def feed(request: Request):
 @frontend_router.get("/users/{username}")
 # @require_auth()
 async def profile(request: Request, username: str):
+    """
+    User profile (/users/[username])
+    """
     user = await users.fetch_one(username=username)
 
     logged_in_user = await get_user(request)
@@ -98,6 +113,9 @@ async def profile(request: Request, username: str):
 @frontend_router.get("/dashboard")
 @require_auth()
 async def dashboard(request: Request):
+    """
+    Dashboard page (/dashboard)
+    """
     user = await get_user(request)
 
     assert user is not None

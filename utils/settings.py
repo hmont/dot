@@ -20,4 +20,15 @@ REDIS_PORT = int(os.environ['REDIS_PORT'])
 REDIS_PASS = quote(os.environ['REDIS_PASS'])
 REDIS_DB = int(os.environ['REDIS_DB'])
 
-DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DB_URL = (
+    f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+
+REGISTRATION_ENABLED = (
+    {"true": True, "false": False}
+    .get(os.environ['REGISTRATION_ENABLED'])
+)
+
+if REGISTRATION_ENABLED is None:
+    print(os.environ['REGISTRATION_ENABLED'])
+    raise ValueError("REGISTRATION_ENABLED must be either true or false")

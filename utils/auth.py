@@ -15,10 +15,13 @@ from tables import users
 from objects.user import User
 
 async def get_user(request: Optional[Request]) -> Optional[User]:
+    """
+    Returns the user of the given request, or None if there is none.
+    """
     if request is None:
-        raise ValueError('endpoints or pages using the @endpoint '
-                         'or @page decorator must include the request '
-                         'as a kwarg')
+        raise ValueError('endpoints or pages using the @require_auth '
+                         'decorator must include the request '
+                         'as an argument')
 
     session_id = request.cookies.get('session_id')
 
@@ -68,6 +71,9 @@ def require_auth(endpoint: bool = False):
 
 
 async def logout(request: Request, response: Response):
+    """
+    Log out the user of the given request and return the given Response.
+    """
     session_id = request.cookies.get('session_id')
 
     if session_id is None:

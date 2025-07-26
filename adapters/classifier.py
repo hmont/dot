@@ -4,6 +4,9 @@ from transformers import AutoTokenizer
 from transformers import AutoModelForSequenceClassification
 
 class Classifier:
+    """
+    Class representing the sentiment analysis classifier.
+    """
     def __init__(self):
         self.tokenizer = None
         self.model = None

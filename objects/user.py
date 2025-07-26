@@ -7,6 +7,9 @@ from typing import Dict
 from sqlalchemy import RowMapping
 
 class User: # pylint: disable=too-many-instance-attributes
+    """
+    Class representing a user object.
+    """
     def __init__( # pylint: disable=too-many-arguments, too-many-positional-arguments
         self,
         username: str,
@@ -56,7 +59,7 @@ class User: # pylint: disable=too-many-instance-attributes
 
     def to_dict(self) -> Dict[str, Any]:
         """
-        Return a Dict representation of the Preferences object.
+        Return a Dict representation of the User object.
         """
         return {
             'id': self.id,

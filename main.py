@@ -15,7 +15,7 @@ from routes.web import web_router
 from routes.api import api_router
 
 @asynccontextmanager
-async def lifespan(a: FastAPI): # pylint: disable=unused-argument
+async def lifespan(a: FastAPI): # pylint: disable=unused-argument,missing-function-docstring
     classifier.setup()
     await database.connect()
     yield

@@ -6,7 +6,6 @@ from fastapi import Request
 from tables import users as users_table
 from tables import user_preferences
 
-from utils.auth import require_auth
 from utils.auth import get_user
 
 router = APIRouter(prefix='/users')
@@ -18,6 +17,13 @@ async def fetch_user(
     u: Optional[int] = None,
     name: Optional[str] = None,
 ):
+    """
+    The endpoint for fetching a user's data.
+
+    If the requested user is private and the current logged in \
+    user does not match the requested user, the user's data is not
+    returned.
+    """
     kwargs = {}
     req_user = await get_user(request)
 

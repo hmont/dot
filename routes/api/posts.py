@@ -15,6 +15,11 @@ router = APIRouter(prefix='/posts')
 @router.post('/create')
 @require_auth(endpoint=True)
 async def create_post(request: Request):
+    """
+    The endpoint for post creation.
+
+    Requires that the user be logged in.
+    """
     session_id = request.cookies['session_id']
 
     user_id = await redis.get(session_id)
@@ -47,6 +52,9 @@ async def fetch_posts(
     p: Optional[int] = None,
     s: Optional[int] = None
 ):
+    """
+    The endpoint for post fetching.
+    """
     user = await get_user(request)
 
     user_id = user.id if user else None

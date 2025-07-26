@@ -20,6 +20,9 @@ from . import user_preferences
 from . import Base
 
 class Users(Base): # pylint: disable=too-few-public-methods
+    """
+    Class representing the `users` table in the database.
+    """
     __tablename__ = "users"
 
     user_id = Column(
@@ -77,6 +80,16 @@ async def create(
     username: str,
     password_bytes: bytes,
 ) -> Optional[int]:
+    """
+    Create a user in the database with the given username and hashed password.
+
+    Args:
+        username (str): Username of the user to be created.
+        password_bytes (bytes): The hashed password to be used for the user.
+
+    Returns:
+        Optional[int]: The user ID of the created user, or None if the user was not created.
+    """
     stmt = insert(Users).values(
         username=username,
         display_name=username,
@@ -103,6 +116,19 @@ async def fetch_one(
     username: Optional[str] = None,
     user_id: Optional[int] = None
 ) -> Optional[User]:
+    """
+    Fetch the user from the database with the given username or user ID.
+
+    Args:
+        username (Optional[str], optional): The username of the user to fetch.
+        user_id (Optional[int], optional): The user ID of the user to fetch.
+
+    Raises:
+        ValueError: If neither a username nor user ID were provided.
+
+    Returns:
+        Optional[User]: The user with the given username/ID, or None if none was found.
+    """
     if not username and not user_id:
         raise ValueError("one of username or user_id must be provided")
 
@@ -127,6 +153,20 @@ async def update_one(
     password_hash: Optional[bytes] = None,
     bio: Optional[str] = None
 ):
+    """
+    Update the user with the given user ID with the given values.
+
+    Args:
+        user_id (int): The ID of the user to update.
+        username (Optional[str], optional): The user's \
+            new username. If None, the username is not updated.
+        display_name (Optional[str], optional): The user's new \
+            display name. If None, the display name is not updated.
+        password_hash (Optional[bytes], optional): The user's new \
+            password hash. If None, the hash is not updated.
+        bio (Optional[str], optional): The user's new biography. \
+            If None, the biography is not updated.
+    """
     stmt = update(Users).where(Users.user_id == user_id)
 
     if username is not None:
@@ -145,6 +185,13 @@ async def delete_one(
     user_id: Optional[int] = None,
     username: Optional[str] = None
 ):
+    """
+    Delete the user with the given username or user ID.
+
+    Args:
+        user_id (Optional[int], optional): The user ID of the user to be deleted.
+        username (Optional[str], optional): The username of the user to be deleted.
+    """
     stmt = _delete(Users)
 
     if user_id:

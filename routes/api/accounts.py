@@ -6,6 +6,7 @@ import bcrypt
 
 from utils.auth import get_user
 from utils.auth import logout
+from utils.auth import require_auth
 
 from tables import users
 from tables import posts
@@ -14,7 +15,13 @@ from tables import user_preferences
 router = APIRouter(prefix='/account')
 
 @router.post('/delete')
+@require_auth(endpoint=True)
 async def delete_account(request: Request, response: Response):
+    """
+    The endpoint for account deletion.
+
+    Requires that the user be logged in.
+    """
     user = await get_user(request)
 
     if user is None:
@@ -34,8 +41,6 @@ async def delete_account(request: Request, response: Response):
     await users.delete_one(user_id=user.id)
     await user_preferences.delete_one(user_id=user.id)
     await posts.delete(poster_id=user.id)
-
-
 
     return {'success': True,
             'message': 'we\'re sorry to see you go :('}
