@@ -10,6 +10,8 @@ from tables import posts
 from utils.auth import require_auth
 from utils.auth import get_user
 
+from constants import Privileges
+
 router = APIRouter(prefix='/posts')
 
 @router.post('/create')
@@ -71,3 +73,42 @@ async def fetch_posts(
     }
 
     return content
+
+@router.post('/delete')
+@require_auth(endpoint=True)
+async def delete(request: Request):
+    """
+    Endpoint for deleting posts.
+
+    Requires that the user be logged in
+    """
+    user = await get_user(request)
+
+    assert user is not None
+
+    post_id = (await request.json()).get('post')
+
+    payload = {
+        'success': False,
+        'message': 'no post ID provided'
+    }
+
+    if post_id is None:
+        return payload
+
+    post = await posts.fetch_one(post_id)
+
+    if post is None:
+        payload['message'] = 'post not found'
+        return payload
+
+    if user.privs < Privileges.MODERATOR and user.id != post.poster_id:
+        payload['message'] = 'no permission'
+        return payload
+
+    await posts.delete_one(post_id=post_id)
+
+    payload['success'] = True
+    payload['message'] = 'post deleted'
+
+    return payload

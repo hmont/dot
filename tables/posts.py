@@ -152,6 +152,7 @@ async def fetch_public(
 
     return [Post.from_mapping(p) for p in result]
 
+
 async def delete(
     poster_id: int
 ):
@@ -164,3 +165,31 @@ async def delete(
     stmt = _delete(Posts).where(Posts.poster == poster_id)
 
     await database.execute(stmt)
+
+
+async def delete_one(
+    post_id: int
+) -> None:
+    """
+    Delete the post with the given post ID.
+    """
+    stmt = _delete(Posts).where(Posts._id == post_id)
+
+    await database.execute(stmt)
+
+
+async def fetch_one(
+    post_id: int
+) -> Post | None:
+    """
+    Fetch a single post from the database with the given ID.
+
+    Returns the Post object, or None if no post was found with the given ID.
+    """
+
+    stmt = select(Posts).where(Posts._id == post_id) # pylint: disable=protected-access
+
+    res = await database.fetch_one(stmt)
+
+    return Post.from_mapping(res) if res else None
+

@@ -50,7 +50,8 @@ As per Dot's stated purpose of preventing toxicity on social media, Dot includes
 Due to file size and copyright limitations, no sentiment analysis model is included in this repository. Instead, it is recommended to download a pretrained/fine-tuned sentiment analysis model from e.g. [Hugging Face](https://huggingface.co/). After download, the model and its associated JSON files will need to be placed into a directory called `model`. This may also require modifying the [classifier code](https://github.com/hmont/dot/blob/main/adapters/classifier.py) to better suit the different model.
 
 ### Setup PostgreSQL database
-#### Note: The included `db.sql` schema file has not been extensively tested. If you run into any issues, try creating the tables manually using the SQLAlchemy models as a guide.
+> [!NOTE]
+> The included `db.sql` schema file has not been extensively tested. If you run into any issues, try creating the tables manually using the SQLAlchemy models as a guide.
 
 Import the database structure:
 
