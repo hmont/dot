@@ -7,10 +7,9 @@ from PIL import Image
 
 from fastapi import APIRouter
 from fastapi import Request
+from fastapi import UploadFile
 
 import aiofiles
-
-from fastapi import UploadFile
 
 from utils.auth import require_auth
 from utils.auth import get_user
@@ -163,6 +162,9 @@ async def update(request: Request):
 @router.post('/update_profile_picture')
 @require_auth(endpoint=True)
 async def update_avatar(request: Request, file: UploadFile):
+    """
+    Endpoint for users to update their avatar.
+    """
     user = await get_user(request)
 
     assert user is not None
@@ -172,7 +174,7 @@ async def update_avatar(request: Request, file: UploadFile):
     try:
         image = Image.open(BytesIO(data))
         image.verify()
-    except Exception:
+    except Exception: # pylint: disable=broad-exception-caught
         return {'success': False, 'message': 'invalid image file'}
 
     if len(data) > 5 * 1000 * 1000:

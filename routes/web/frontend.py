@@ -129,7 +129,7 @@ async def dashboard(request: Request):
         context={'username': user.username})
 
 
-async def handler_404(request: Request, exc):
+async def handler_404(request: Request):
     """
         Handler for 404 errors.
     """
@@ -137,5 +137,8 @@ async def handler_404(request: Request, exc):
 
 
 @frontend_router.get('/favicon.ico')
-async def favicon(request: Request):
+async def favicon():
+    """
+    Favicon
+    """
     return FileResponse('static/img/favicon.ico')

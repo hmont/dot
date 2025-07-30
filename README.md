@@ -18,8 +18,10 @@ Dot was created to address the overwhelming negativity that dominates much of mo
 ### User Profile
 ![Screenshot of user profile page](demo/user-profile.png "User Profile Page")
 
-### Dashboard (zoomed out slightly for clarity)
-![Screenshot of dashboard page](demo/dashboard.png "Dashboard Page")
+### Dashboard
+![Screenshot of dashboard page](demo/dashboard-1.png "Dashboard Page")
+![Screenshot of dashboard page](demo/dashboard-2.png "Dashboard Page")
+
 
 </details>
 
@@ -63,6 +65,21 @@ psql -U <YOUR_USERNAME> -d <YOUR_DATABASE> -f ext/db.sql
 ```
 
 
+
+
+### Configure Dot settings
+Dot itself requires a PostgreSQL database as well as Redis.
+
+To configure access to these (or other options such as the host/port Dot runs on), first copy the example .env file to the project root directory:
+```bash
+# make sure you're in the project root directory!
+cd dot
+
+cp ext/.env.example .env
+```
+
+Then modify the configuration as needed.
+
 ### Setup NGINX reverse proxy (for production environments)
 Dot does not natively use HTTPS/SSL as part of the application itself. As such, in production, it is highly recommended to use Dot behind a reverse proxy which allows for HTTPS (NGINX in this example).
 
@@ -88,16 +105,3 @@ Finally, test the configuration, and, assuming no errors, reload NGINX:
 sudo nginx -t
 sudo systemctl reload nginx
 ```
-
-### Configure Dot settings
-Dot itself requires a PostgreSQL database as well as Redis.
-
-To configure access to these (or other options such as the host/port Dot runs on), first copy the example .env file to the project root directory:
-```bash
-# make sure you're in the project root directory!
-cd dot
-
-cp ext/.env.example .env
-```
-
-Then modify the configuration as needed.

@@ -146,7 +146,7 @@ async def fetch_one(
     return User.from_mapping(result) if result else None
 
 
-async def update_one(
+async def update_one( # pylint: disable=too-many-arguments,too-many-positional-arguments
     user_id: int,
     username: Optional[str] = None,
     display_name: Optional[str] = None,

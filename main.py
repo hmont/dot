@@ -27,8 +27,8 @@ async def lifespan(a: FastAPI): # pylint: disable=unused-argument,missing-functi
 app = FastAPI(lifespan=lifespan)
 
 @app.exception_handler(404)
-async def not_found(request: Request, exc):
-    return await handler_404(request, exc)
+async def not_found(request: Request): # pylint: disable=missing-function-docstring
+    return await handler_404(request)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(web_router)
