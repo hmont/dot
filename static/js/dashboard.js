@@ -16,6 +16,10 @@ let confirmPasswordInput = document.querySelector('#confirm-password');
 
 let deletePasswordInput = document.querySelector('#delete-password-input');
 
+let profilePictureUpload = document.querySelector('#profile-picture-upload');
+let profilePicturePreview = document.querySelector('#profile-picture-preview');
+let savePictureButton = document.querySelector('#save-picture-btn');
+
 function confirmDeleteAccount() {
     document.body.style.overflow = 'hidden';
 
@@ -72,6 +76,44 @@ async function savePrivacySettings() {
     } else {
         var type = 'error';
     }
+
+    showAlert(type, responseData.message);
+}
+
+function previewProfilePicture(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            profilePicturePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        savePictureButton.disabled = false;
+        savePictureButton.classList.remove('bg-gray-400', 'cursor-not-allowed');
+        savePictureButton.classList.add('bg-red-500', 'hover:bg-red-600');
+    }
+}
+
+async function uploadProfilePicture() {
+    const file = profilePictureUpload.files[0];
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    if (!file) {
+        showAlert('error', 'you must select a picture first');
+        return;
+    }
+
+    const response = await fetch('/api/preferences/update_profile_picture', {
+        method: 'POST',
+        body: formData
+    });
+
+    const responseData = await response.json();
+
+    const type = responseData.success ? 'success' : 'error';
 
     showAlert(type, responseData.message);
 }
@@ -189,6 +231,8 @@ document.addEventListener("DOMContentLoaded", async event => {
     bioInput.dispatchEvent(new Event('input'));
     bioCount.textContent = `${bioInput.value.length}/150`
     displayNameInput.innerHTML = profileSettings.display_name;
+
+    profilePicturePreview.src = profileSettings.avatar_url ? `/static/img/avatar/${profileSettings.avatar_url}` : '/static/img/default-avatar.png';
 });
 
 window.confirmDeleteAccount = confirmDeleteAccount;
@@ -198,3 +242,5 @@ window.saveProfileSettings = saveProfileSettings;
 window.fetchPreferences = fetchPreferences;
 window.updatePassword = updatePassword;
 window.proceedToDelete = proceedToDelete;
+window.previewProfilePicture = previewProfilePicture;
+window.uploadProfilePicture = uploadProfilePicture;

@@ -1,7 +1,16 @@
+import os
+from io import BytesIO
+
 import bcrypt
+
+from PIL import Image
 
 from fastapi import APIRouter
 from fastapi import Request
+
+import aiofiles
+
+from fastapi import UploadFile
 
 from utils.auth import require_auth
 from utils.auth import get_user
@@ -149,3 +158,36 @@ async def update(request: Request):
     )
 
     return {'success': True, 'message': 'privacy settings updated!'}
+
+
+@router.post('/update_profile_picture')
+@require_auth(endpoint=True)
+async def update_avatar(request: Request, file: UploadFile):
+    user = await get_user(request)
+
+    assert user is not None
+
+    data = await file.read()
+
+    try:
+        image = Image.open(BytesIO(data))
+        image.verify()
+    except Exception:
+        return {'success': False, 'message': 'invalid image file'}
+
+    if len(data) > 5 * 1000 * 1000:
+        return {'success': False, 'message': 'file is too large'}
+
+    if not file.filename:
+        return {'success': False, 'message': 'invalid profile picture'}
+
+    ext = os.path.splitext(file.filename)[-1]
+
+    new_filename = str(user.id) + ext
+
+    async with aiofiles.open(f'static/img/avatar/{new_filename}', 'wb') as outfile:
+        await outfile.write(data)
+
+    await users.update_one(user_id=user.id, avatar_url=new_filename)
+
+    return {'success': True, 'message': 'profile picture updated!'}

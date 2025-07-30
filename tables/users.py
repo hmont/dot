@@ -151,7 +151,8 @@ async def update_one(
     username: Optional[str] = None,
     display_name: Optional[str] = None,
     password_hash: Optional[bytes] = None,
-    bio: Optional[str] = None
+    bio: Optional[str] = None,
+    avatar_url: Optional[str] = None
 ):
     """
     Update the user with the given user ID with the given values.
@@ -177,6 +178,8 @@ async def update_one(
         stmt = stmt.values(bio=bio)
     if password_hash is not None:
         stmt = stmt.values(password_bytes=password_hash)
+    if avatar_url is not None:
+        stmt = stmt.values(avatar_url=avatar_url)
 
     await database.execute(stmt)
 

@@ -27,11 +27,17 @@
 
                     <div class="flex items-center space-x-8">
                         <a href="/feed" class="text-gray-600 hover:text-red-500 transition">feed</a>
-                        <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
-                        <a href="/users/{{ username }}" class="text-gray-600 hover:text-red-500 transition">{{ username }}</a>
-                        <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition" onclick="logout()">
-                            sign out
-                        </button>
+                        {% if sign_up_button %}
+                            <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition">
+                                <a href="/register">sign up</a>
+                            </button>
+                        {% else %}
+                            <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
+                            <a href="/users/{{ username }}" class="text-gray-600 hover:text-red-500 transition">{{ username }}</a>
+                            <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition" onclick="logout()">
+                                sign out
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>

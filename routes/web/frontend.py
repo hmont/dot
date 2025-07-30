@@ -6,6 +6,7 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
 from fastapi.responses import RedirectResponse
+from fastapi.responses import FileResponse
 
 import timeago
 
@@ -62,7 +63,9 @@ async def feed(request: Request):
     return templates.TemplateResponse(
         name="feed.html",
         request=request,
-        context={'username': user.username if user else ''}
+        context={'username': user.username if user else '',
+                 'sign_up_button': (user is None)}
+
     )
 
 
@@ -76,7 +79,7 @@ async def profile(request: Request, username: str):
 
     logged_in_user = await get_user(request)
 
-    context = {"username": logged_in_user.username if logged_in_user else ""}
+    context = {'username': logged_in_user.username if logged_in_user else ''}
 
     if not user:
         return templates.TemplateResponse(
@@ -97,7 +100,6 @@ async def profile(request: Request, username: str):
     if prefs.is_private and (not logged_in_user or logged_in_user.username != username):
         return templates.TemplateResponse(name="private_profile.html", request=request)
 
-
     return templates.TemplateResponse(
         name="profile.html",
         request=request,
@@ -105,7 +107,8 @@ async def profile(request: Request, username: str):
             'user': user,
             'time_ago': timeago.format(user.created_at, datetime.now()),
             'user_id': user.id,
-            'current_username': logged_in_user.username if logged_in_user else ''
+            'current_username': logged_in_user.username if logged_in_user else '',
+            'sign_up_button': (logged_in_user is None)
         }
     )
 
@@ -124,3 +127,15 @@ async def dashboard(request: Request):
         name="dashboard.html",
         request=request,
         context={'username': user.username})
+
+
+async def handler_404(request: Request, exc):
+    """
+        Handler for 404 errors.
+    """
+    return templates.TemplateResponse("404.html", {"request": request}, status_code=404)
+
+
+@frontend_router.get('/favicon.ico')
+async def favicon(request: Request):
+    return FileResponse('static/img/favicon.ico')

@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from fastapi import FastAPI
+from fastapi import Request
 
 from fastapi.staticfiles import StaticFiles
 
@@ -14,6 +15,8 @@ from state.global_state import database
 from routes.web import web_router
 from routes.api import api_router
 
+from routes.web.frontend import handler_404
+
 @asynccontextmanager
 async def lifespan(a: FastAPI): # pylint: disable=unused-argument,missing-function-docstring
     classifier.setup()
@@ -22,6 +25,10 @@ async def lifespan(a: FastAPI): # pylint: disable=unused-argument,missing-functi
     await database.disconnect()
 
 app = FastAPI(lifespan=lifespan)
+
+@app.exception_handler(404)
+async def not_found(request: Request, exc):
+    return await handler_404(request, exc)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.include_router(web_router)

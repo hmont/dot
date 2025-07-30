@@ -24,11 +24,17 @@
                 </div>
                 <div class="flex items-center space-x-8">
                     <a href="/feed" class="text-gray-600 hover:text-red-500 transition">feed</a>
-                    <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
-                    <a href="/users/{{ current_username }}" class="text-gray-600 hover:text-red-500 transition">{{ current_username }}</a>
-                    <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition">
-                        <a href="/logout">sign out</a>
-                    </button>
+                    {% if sign_up_button %}
+                        <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition">
+                            <a href="/register">sign up</a>
+                        </button>
+                    {% else %}
+                        <a href="/dashboard" class="text-gray-600 hover:text-red-500 transition">dashboard</a>
+                        <a href="/users/{{ current_username }}" class="text-gray-600 hover:text-red-500 transition">{{ current_username }}</a>
+                        <button class="border border-red-500 text-red-500 px-4 py-2 rounded-md hover:bg-red-50 transition" onclick="logout()">
+                            sign out
+                        </button>
+                    {% endif %}
                 </div>
             </div>
             </div>
@@ -46,6 +52,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-1">
                         <div class="bg-white rounded-lg shadow-sm border p-6 sticky top-24">
+                            <img id="avatar" src="" alt="User avatar" class="w-40 h-40 rounded-2xl mb-6 border-2 border-gray-200 flex-shrink-0">
                             <h2 id="display-name" class="text-3xl font-bold text-gray-800 mb"></h2>
                             <h3 id="username-container" class="text-xl text-gray-700 mb-6">@<span id="username"></span>
                             </h3>
@@ -92,6 +99,7 @@
         </div>
 
         <script src="/static/js/profile.js" type="module"></script>
+        <script src="/static/js/logout.js" type="module"></script>
         <script>var currentPage = 1;</script>
     </body>
 </html>

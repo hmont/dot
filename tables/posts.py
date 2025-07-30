@@ -30,7 +30,7 @@ class Posts(Base): # pylint: disable=too-few-public-methods
     """
     __tablename__ = 'posts'
 
-    _id = Column(
+    post_id = Column(
         Integer,
         name="id",
         primary_key=True
@@ -173,7 +173,7 @@ async def delete_one(
     """
     Delete the post with the given post ID.
     """
-    stmt = _delete(Posts).where(Posts._id == post_id)
+    stmt = _delete(Posts).where(Posts._id == post_id) # pylint: disable=protected-access
 
     await database.execute(stmt)
 
@@ -187,9 +187,8 @@ async def fetch_one(
     Returns the Post object, or None if no post was found with the given ID.
     """
 
-    stmt = select(Posts).where(Posts._id == post_id) # pylint: disable=protected-access
+    stmt = select(Posts).where(Posts.post_id == post_id) # pylint: disable=protected-access
 
     res = await database.fetch_one(stmt)
 
     return Post.from_mapping(res) if res else None
-

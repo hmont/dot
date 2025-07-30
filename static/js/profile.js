@@ -11,6 +11,8 @@ let noPosts = document.querySelector("#no-posts");
 let postsContainer = document.querySelector('#posts-container');
 let loadingScreen = document.querySelector('div#loading-screen');
 
+let avatarDisplay = document.querySelector('#avatar');
+
 var globalUser;
 
 document.addEventListener("DOMContentLoaded", async e => {
@@ -29,6 +31,7 @@ document.addEventListener("DOMContentLoaded", async e => {
 
     bioElement.innerHTML = user.bio ? user.bio : `<i>user has no biography</i>`;
     timeagoElement.innerHTML = timeAgo(user.created_at);
+    avatarDisplay.src = `/static/img/avatar/${user.avatar_url ? user.avatar_url : 'default.png'}`;
 
     globalUser = user;
 
@@ -61,14 +64,20 @@ async function loadPosts(page = 1) {
         const display_name = globalUser.display_name;
         const date = post.created_at;
         const content = decodeURIComponent(post.content);
+        const avatar_url = globalUser.avatar_url;
 
         const postHTML = `
             <div class="bg-white rounded-lg shadow-sm border p-6 text-gray-500">
-                <div id="post grid grid-cols-5 inline-block text-left">
-                    <h2 class="text-gray-900 text-2xl font-bold align-middle inline-block hover:underline"><a href="/users/${username}">${display_name}</a></h2>
-                    <span class="ml-2 text-gray-500 text-md align-middle hover:underline"><a href="/users/${username}">@${username}</a></span>
-                    <span title="${date}" class="ml-2 text-gray-500 text-md align-middle">${timeAgo(date)}</span>
-                    <p>${content}</p>
+                <div class="flex items-start space-x-3">
+                    <img src="/static/img/avatar/${avatar_url ? avatar_url : 'default.png'}" alt="${display_name}'s avatar" class="w-16 h-16 rounded-lg flex-shrink-0">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2">
+                            <h2 class="text-gray-900 text-2xl font-bold hover:underline"><a href="/users/${username}">${display_name}</a></h2>
+                            <span class="text-gray-500 text-md hover:underline"><a href="/users/${username}">@${username}</a></span>
+                            <span title="${date}" class="text-gray-500 text-md">${timeAgo(date)}</span>
+                        </div>
+                        <p class="text-wrap break-all mt-2">${content}</p>
+                    </div>
                 </div>
             </div>
         `

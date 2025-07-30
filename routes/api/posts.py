@@ -2,7 +2,6 @@ from typing import Optional
 
 from fastapi import APIRouter, Request
 
-from state.global_state import redis
 from state.global_state import classifier
 
 from tables import posts
@@ -22,13 +21,19 @@ async def create_post(request: Request):
 
     Requires that the user be logged in.
     """
-    session_id = request.cookies['session_id']
+    user = await get_user(request)
 
-    user_id = await redis.get(session_id)
+    assert user is not None
 
     data = await request.json()
 
-    content = data['content'][:120]
+    content = data['content'].strip()[:120]
+
+    if len(content) < 1:
+        return {
+            'success': False,
+            'message': 'post cannot be empty'
+        }
 
     positivity_score = classifier.predict(content)
 
@@ -40,7 +45,7 @@ async def create_post(request: Request):
         }
 
     await posts.create(
-        poster=user_id,
+        poster=user.id,
         content=content
     )
 
