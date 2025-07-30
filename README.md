@@ -4,6 +4,9 @@ Social media application built using Python, FastAPI, JavaScript, HTML/TailwindC
 ## Background
 Dot was created to address the overwhelming negativity that dominates much of modern social media. In contrast to platforms filled with outrage, toxicity, and algorithm-driven noise, Dot offers a quiet, kind space focused entirely on positivity. It's a place to share uplifting moments - a song stuck in your head, a small win, or just something that made you smile - with no algorithms, no trolls, and no drama. Dot aims to bring back a sense of connection, empathy, and joy to the online experience.
 
+## Demo
+A live demonstration instance is available at [dot.henry.moe](https://dot.henry.moe).
+
 ## Screenshots
 <details>
 
