@@ -232,7 +232,9 @@ document.addEventListener("DOMContentLoaded", async event => {
     bioCount.textContent = `${bioInput.value.length}/150`
     displayNameInput.innerHTML = profileSettings.display_name;
 
-    profilePicturePreview.src = profileSettings.avatar_url ? `/static/img/avatar/${profileSettings.avatar_url}` : '/static/img/default-avatar.png';
+    if (profileSettings.avatar_url != null) {
+        profilePicturePreview.src = `/static/img/avatar/${profileSettings.avatar_url}`;
+    }
 });
 
 window.confirmDeleteAccount = confirmDeleteAccount;
