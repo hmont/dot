@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timezone
 
 from typing import Any
 from typing import Mapping
@@ -61,11 +62,21 @@ class User: # pylint: disable=too-many-instance-attributes
         """
         Return a Dict representation of the User object.
         """
+        def _iso(dt: datetime | None):
+            if dt is None:
+                return None
+
+            local_tz = datetime.now().astimezone().tzinfo
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=local_tz)
+
+            return dt.astimezone(timezone.utc).isoformat()
+
         return {
             'id': self.id,
             'username': self.username,
             'display_name': self.display_name,
-            'created_at': self.created_at,
+            'created_at': _iso(self.created_at),
             #'updated_at': self.updated_at,
             #'password_bytes': self.password_bytes,
             'avatar_url': self.avatar_url,

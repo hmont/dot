@@ -35,10 +35,29 @@ export function showAlert(type, message = null) {
     }, 5000);
 }
 
-export function timeAgo(d) {
-    const date = new Date(d);
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
+function parseDate(d) {
+    if (d instanceof Date) return d;
+
+    if (typeof d === 'string') {
+        const hasTz = /[zZ]|[+-]\d{2}:?\d{2}$/.test(d);
+        const isoNoTz = /^\d{4}-\d{2}-\d{2}T/.test(d) && !hasTz;
+        const parsed = isoNoTz ? new Date(`${d}Z`) : new Date(d);
+
+        if (!Number.isNaN(parsed.getTime())) return parsed;
+    }
+
+    return new Date(d);
+}
+
+export function timeAgo(d, nowOverride = null) {
+    const date = parseDate(d);
+    const now = nowOverride ? parseDate(nowOverride) : new Date();
+    let diffSeconds = (date - now) / 1000; // positive = future, negative = past
+
+    // Treat small future skews (e.g., clock or timezone drift) as past events
+    if (diffSeconds > 0 && diffSeconds < 4 * 3600) {
+        diffSeconds = -diffSeconds;
+    }
 
     const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
@@ -53,9 +72,9 @@ export function timeAgo(d) {
     ];
 
     for (const interval of intervals) {
-        const delta = Math.floor(seconds / interval.seconds);
-        if (Math.abs(delta) >= 1) {
-            return rtf.format(-delta, interval.label);
+        if (Math.abs(diffSeconds) >= interval.seconds) {
+            const delta = Math.round(diffSeconds / interval.seconds);
+            return rtf.format(delta, interval.label);
         }
     }
 

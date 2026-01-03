@@ -121,6 +121,9 @@ async function fetchPosts(page = 1, page_size = 5) {
         }
     });
 
+    const serverNowHeader = response.headers.get('Date');
+    const serverNow = serverNowHeader ? new Date(serverNowHeader) : null;
+
     const data = await response.json();
 
     if (!data.success) {
@@ -151,7 +154,7 @@ async function fetchPosts(page = 1, page_size = 5) {
                         <div class="flex items-center space-x-2">
                             <h2 class="text-gray-900 text-2xl font-bold hover:underline"><a href="/users/${username}">${display_name}</a></h2>
                             <span class="text-gray-500 text-md hover:underline"><a href="/users/${username}">@${username}</a></span>
-                            <span title="${date}" class="text-gray-500 text-md">${timeAgo(date)}</span>
+                            <span title="${date}" class="text-gray-500 text-md">${timeAgo(date, serverNow)}</span>
                         </div>
                         <p class="text-wrap break-all mt-2">${content}</p>
                     </div>

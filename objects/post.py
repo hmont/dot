@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timezone
 
 from typing import Mapping
 from typing import Any
@@ -45,10 +46,20 @@ class Post:
         """
         Return a dictionary representation of the Post object.
         """
+        def _iso(dt: datetime | None):
+            if dt is None:
+                return None
+
+            local_tz = datetime.now().astimezone().tzinfo
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=local_tz)
+
+            return dt.astimezone(timezone.utc).isoformat()
+
         return {
             'id': self.id,
             'poster': self.poster_id,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'created_at': _iso(self.created_at),
+            'updated_at': _iso(self.updated_at),
             'content': self.content
         }

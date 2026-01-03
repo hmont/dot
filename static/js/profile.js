@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", async e => {
     });
 
     bioElement.innerHTML = user.bio ? user.bio : `<i>user has no biography</i>`;
-    timeagoElement.innerHTML = timeAgo(user.created_at);
+    timeagoElement.innerHTML = timeAgo(user.created_at, user._serverNow);
     avatarDisplay.src = `/static/img/avatar/${user.avatar_url ? user.avatar_url : 'default.png'}`;
 
     globalUser = user;
@@ -47,6 +47,9 @@ async function loadPosts(page = 1) {
             'Content-Type': 'application/json',
         }
     });
+
+    const serverNowHeader = response.headers.get('Date');
+    const serverNow = serverNowHeader ? new Date(serverNowHeader) : null;
 
     const data = await response.json();
 
@@ -74,7 +77,7 @@ async function loadPosts(page = 1) {
                         <div class="flex items-center space-x-2">
                             <h2 class="text-gray-900 text-2xl font-bold hover:underline"><a href="/users/${username}">${display_name}</a></h2>
                             <span class="text-gray-500 text-md hover:underline"><a href="/users/${username}">@${username}</a></span>
-                            <span title="${date}" class="text-gray-500 text-md">${timeAgo(date)}</span>
+                            <span title="${date}" class="text-gray-500 text-md">${timeAgo(date, serverNow)}</span>
                         </div>
                         <p class="text-wrap break-all mt-2">${content}</p>
                     </div>
@@ -103,9 +106,12 @@ async function loadUser() {
         }
     });
 
+    const serverNowHeader = result.headers.get('Date');
+    const serverNow = serverNowHeader ? new Date(serverNowHeader) : null;
+
     const json = await result.json();
 
-    return json.user;
+    return json.user ? { ...json.user, _serverNow: serverNow } : null;
 }
 
 window.loadPosts = loadPosts;
